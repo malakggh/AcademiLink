@@ -17,11 +17,11 @@
    - Challenges and inefficiencies in the manual system
 
 4. [**Comparison with Existing Tools**](#comparison-with-existing-tools)
-   - Jet Admin
-   - Salesforce
-   - Microsoft Teams
-   - Google Workspace
-   - Asana
+   - [Jet Admin](#jet-admin)
+   - [Salesforce](#salesforce)
+   - [Microsoft Teams](#microsoft-teams)
+   - [Google Workspace](#google-workspace)
+   - [Asana](#asana)
    - Features, limitations, and suitability for specific needs
    - Comparative analysis showing how AcademiLink provides a more integrated solution
 
