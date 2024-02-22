@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade , onUpdate: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade , onUpdate: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?   
+  image         String?
+  isAdmin       Boolean   @default(false)
+  accounts      Account[] 
+  sessions      Session[]
+  phoneNumber   String?
+  birthday      DateTime?
+  reviews       ProductReview[] 
+  favorites     Favorite[]
+  PasswordReset PasswordReset?
+}
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  token     String   
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String    @unique
+  User      User      @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  titleAr   String?
+  titleEn   String?
+  titleHe   String?
+  image     String?
+  slug      String    @unique
+  products  Product[] 
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  titleAr         String?
+  titleEn         String?
+  titleHe         String?
+  descriptionAr   String?
+  descriptionEn   String?
+  descriptionHe   String?
+  image           String?
+  price           Float
+  category        Category @relation(fields: [catSlug], references: [slug], onDelete: Cascade, onUpdate: Cascade)
+  catSlug         String
+  reviews         ProductReview[]
+  reviewsCount    Int     @default(0)
+  avgRating       Float   @default(0)
+  favorites       Favorite[]
+  favoritesCount  Int     @default(0)
+}
+
+
+model ProductReview {
+  id        Int      @id @default(autoincrement())
+
+  rating    Float    // The user's rating, ranging from 1 to 5
+  text      String?
+  replyText String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  userId    String   
+  productId String   
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product  Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, productId]) // Ensure each user can rate a product only once 
+}
+
+model Favorite {
+  id        Int     @id @default(autoincrement())
+  
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, productId]) // Ensure each user can favorite a product only once
+}
+
+model VerificationCode {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  code      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
