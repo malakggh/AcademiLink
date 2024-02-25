@@ -60,6 +60,9 @@ model User {
   phoneNumber   String?
   birthday      DateTime?
   role          UserRole @default(STUDENT)
+  student       Student?
+  tutor         Tutor?
+  manager       Manager?
 }
 
 enum UserRole {
@@ -68,6 +71,43 @@ enum UserRole {
   MANAGER
 }
 
+model Student {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  // Additional fields specific to students
+}
+
+model Manager {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  // Additional fields specific to managers
+}
+
+model AllCoursesInSCE{
+  courseName        String
+  courseDepartment  String
+  tutorCourses      TutorCourse[]
+  // courseName and courseDepartment are the primary key
+  @@id([courseName, courseDepartment])
+}
+
+model Tutor {
+  id              String            @id @default(cuid())
+  userId          String            @unique
+  user            User              @relation(fields: [userId], references: [id])
+  courses         TutorCourse[]
+}
+
+model TutorCourse {
+  tutorId                           String
+  courseName                        String
+  courseDepartment                  String
+  tutor      Tutor                  @relation(fields: [tutorId], references: [id])
+  course     AllCoursesInSCE        @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
+  @@id([tutorId, courseName, courseDepartment])
+}
 
 
 
