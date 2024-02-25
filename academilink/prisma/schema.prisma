@@ -88,9 +88,10 @@ model Manager {
 model AllCoursesInSCE{
   courseName        String
   courseDepartment  String
-  tutorCourses      TutorCourse[]
   // courseName and courseDepartment are the primary key
   @@id([courseName, courseDepartment])
+  tutorCourses      TutorCourse[]
+  tutorCourseRequests TutorCourseRequest[]
 }
 
 model Tutor {
@@ -98,6 +99,7 @@ model Tutor {
   userId          String            @unique
   user            User              @relation(fields: [userId], references: [id])
   courses         TutorCourse[]
+  requests        TutorCourseRequest[]
 }
 
 model TutorCourse {
@@ -107,6 +109,22 @@ model TutorCourse {
   tutor      Tutor                  @relation(fields: [tutorId], references: [id])
   course     AllCoursesInSCE        @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
   @@id([tutorId, courseName, courseDepartment])
+
+  courseActive                      Boolean @default(true)
+}
+
+model TutorCourseRequest {
+  id                                String @id @default(cuid())
+  tutorId                           String
+  courseName                        String
+  courseDepartment                  String
+  tutor      Tutor                  @relation(fields: [tutorId], references: [id])
+  course     AllCoursesInSCE        @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
+
+  courseGrade                       Float
+  courseRequestMessage              String?
+
+  date                              DateTime @default(now())
 }
 
 
