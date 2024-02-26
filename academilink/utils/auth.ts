@@ -1,3 +1,4 @@
+import "server-only";
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -28,7 +29,7 @@ const config = {
   },
   callbacks: {
     session({ session, token }) {
-      console.log("\nsession", session, "\ntoken", token);
+      // console.log("\nsession", session, "\ntoken", token);
       if (token && token.role) {
         session.user.role = token.role;
       }
@@ -38,20 +39,20 @@ const config = {
       if (user && user.role) {
         token.role = user.role;
       }
-      console.log(
-        "token of jwt",
-        token
-        // "\nsession of jwt",
-        // sessionRequest,
-        // "\nuser of jwt",
-        // user,
-        // "\nprofile of jwt",
-        // profile,
-        // "\naccount of jwt",
-        // account,
-        // "trigger of jwt",
-        // trigger
-      );
+      // console.log(
+      //   "token of jwt",
+      //   token
+      //   // "\nsession of jwt",
+      //   // sessionRequest,
+      //   // "\nuser of jwt",
+      //   // user,
+      //   // "\nprofile of jwt",
+      //   // profile,
+      //   // "\naccount of jwt",
+      //   // account,
+      //   // "trigger of jwt",
+      //   // trigger
+      // );
       return token;
     },
   },
