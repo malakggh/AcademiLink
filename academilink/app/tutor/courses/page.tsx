@@ -1,10 +1,15 @@
-import TutorCourseRequest from "@/components/TutorCourseRequest";
+import { getAllCoursesInSCE } from "@/actions/Courses";
+import FormRequestExample from "@/components/TutorCourseRequest";
 
-export default function Courses() {
+export default async function Courses() {
+  const allCourses = await getAllCoursesInSCE();
   return (
     <div>
       <h1>Courses</h1>
-      <TutorCourseRequest />
+      {/* {allCourses && <TutorCourseRequest allCourses={allCourses} />}
+      {!allCourses && <p>Loading...</p>} */}
+      {allCourses && <FormRequestExample allCourses={allCourses} />}
+      {!allCourses && <p>Loading...</p>}
     </div>
   );
 }

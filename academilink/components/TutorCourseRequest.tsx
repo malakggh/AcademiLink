@@ -1,155 +1,228 @@
 "use client";
-import { getAllCoursesInSCE } from "@/actions/Courses";
+// link to example https://github.com/tomphill/shadcn-form-tut/blob/main/app/page.tsx
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  Select,
+} from "@/components/ui/select";
+import { AllCoursesInSCE } from "@prisma/client";
 import { requestNewCourse } from "@/actions/TutorCourseRequests";
-import type { AllCoursesInSCE } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
+import { getTutorCourseRequestSchema } from "@/lib/schema";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
-// import { useSession } from "next-auth/react";
-
-export default function TutorCourseRequest() {
-  //   const { data: session, status } = useSession();
-  const {
-    data: allCourses,
-    isLoading: allCoursesLoading,
-    isError: allCoursesError,
-  } = useQuery({
-    queryKey: ["AllCoursesInSCE"],
-    queryFn: async () => {
-      try {
-        const allCourses = await getAllCoursesInSCE();
-        return allCourses;
-      } catch (error) {
-        throw error;
-      }
-    },
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  });
-
-  const [filterConditions, setFilterConditions] = useState({
-    courseDepartment: "",
-    courseSemester: 0,
-  });
-
+export default function FormRequestExample({
+  allCourses,
+}: {
+  allCourses: AllCoursesInSCE[];
+}) {
   const allDepartments = Array.from(
-    new Set(allCourses?.map((course) => course.courseDepartment))
+    new Set(allCourses.map((course) => course.courseDepartment))
   );
+
+  const formSchema = getTutorCourseRequestSchema({ allCourses });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      courseDepartment: "",
+      courseSemester: 0,
+      courseName: "",
+      courseGrade: 0,
+      message: "",
+    },
+  });
+
+  const selectedCourseDepartment = form.watch("courseDepartment");
+  const selectedCourseSemester = form.watch("courseSemester");
 
   function getAllSemesters() {
     const semesters =
       allCourses
         ?.filter(
-          (course) =>
-            course.courseDepartment === filterConditions.courseDepartment
+          (course) => course.courseDepartment === selectedCourseDepartment
         )
         .map((course) => course.courseSemester) || [];
     return Array.from(new Set(semesters));
   }
 
+  const [errorMessages, setErrorMessages] = useState<string>("");
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const result = await requestNewCourse(values);
+      console.log("result", result);
+      console.log(result.sucess);
+      form.reset();
+      setErrorMessages("");
+    } catch (error: any) {
+      console.log(error.message);
+      setErrorMessages(error.message);
+      return;
+    }
+  };
+
   return (
-    <>
-      <div className="flex flex-col items-center justify-center w-full h-full">
-        <h1 className="text-6xl font-bold">Tutor Course Request</h1>
-      </div>
-      <form
-        className="flex flex-col items-center justify-center w-full h-full"
-        action={async (fromData) => {
-          await requestNewCourse(fromData);
-        }}
-      >
-        {allCoursesError && <div>Error fetching courses</div>}
-        {allCoursesLoading && <div>Loading...</div>}
-        {allCourses && (
-          <>
-            <label htmlFor="courseDepartment">Course Department</label>
-
-            <select
-              className="text-red-500"
-              name="courseDepartment"
-              id="courseDepartment"
-              onChange={(e) => {
-                setFilterConditions((prev) => ({
-                  ...prev,
-                  courseDepartment: e.target.value,
-                }));
+    <div className="flex min-h-screen flex-col items-center justify-between p-24">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="max-w-md w-full flex flex-col gap-4"
+        >
+          <FormField
+            control={form.control}
+            name="courseDepartment"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Course department</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Course Department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {allDepartments.map((department) => (
+                          <SelectItem key={department} value={department}>
+                            {department}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          {selectedCourseDepartment && (
+            <FormField
+              control={form.control}
+              name="courseSemester"
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Course Year and Semester</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Year and Semester" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAllSemesters().map((semester) => (
+                            <SelectItem key={semester} value={String(semester)}>
+                              Year {Math.ceil(semester / 2)}, Semester{" "}
+                              {((semester + 1) % 2) + 1 === 1 ? "א" : "ב"}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
               }}
-            >
-              {!filterConditions.courseDepartment && ( // Render only if no selection has been made
-                <option value="">Select Department</option>
-              )}
-              {allDepartments.map((department) => (
-                <option value={department} key={department}>
-                  {department}
-                </option>
-              ))}
-            </select>
+            />
+          )}
+          {selectedCourseSemester != 0 && (
+            <FormField
+              control={form.control}
+              name="courseName"
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Course name</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Course" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {allCourses
+                            .filter(
+                              (course) =>
+                                course.courseDepartment ===
+                                  selectedCourseDepartment &&
+                                course.courseSemester == selectedCourseSemester
+                            )
+                            .map((course) => (
+                              <SelectItem
+                                key={course.courseName}
+                                value={course.courseName}
+                              >
+                                {course.courseName}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+          )}
 
-            {filterConditions.courseDepartment && (
-              <>
-                <label htmlFor="courseSemester">Course Year and Semster</label>
-
-                <select
-                  className="text-red-500"
-                  name="courseSemester"
-                  id="courseSemester"
-                  onChange={(e) => {
-                    try {
-                      setFilterConditions((prev) => ({
-                        ...prev,
-                        courseSemester: parseInt(e.target.value),
-                      }));
-                    } catch {
-                      throw new Error("Invalid Semester");
-                    }
-                  }}
-                >
-                  {!filterConditions.courseSemester && ( // Render only if no selection has been made
-                    <option value="">Select Year and Semester</option>
-                  )}
-                  {getAllSemesters().map((semester) => (
-                    <option value={semester} key={semester}>
-                      Year {Math.ceil(semester / 2)}, Semester{" "}
-                      {((semester + 1) % 2) + 1 === 1 ? "א" : "ב"}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
-
-            {filterConditions.courseDepartment &&
-              filterConditions.courseSemester && (
-                <>
-                  <label htmlFor="courseName">Course Name</label>
-
-                  <select
-                    className="text-red-500"
-                    name="courseName"
-                    id="courseName"
-                  >
-                    {allCourses
-                      .filter(
-                        (course) =>
-                          course.courseDepartment ===
-                            filterConditions.courseDepartment &&
-                          course.courseSemester ===
-                            filterConditions.courseSemester
-                      )
-                      .map((course) => (
-                        <option
-                          value={course.courseName}
-                          key={course.courseName}
-                        >
-                          {course.courseName}
-                        </option>
-                      ))}
-                  </select>
-                </>
-              )}
-          </>
-        )}
-
-        <button type="submit">Submit</button>
-      </form>
-    </>
+          <FormField
+            control={form.control}
+            name="courseGrade"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Course grade</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Course grade"
+                      type="number"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name="message"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Message</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Message" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <Button type="submit" className="w-full">
+            Submit
+          </Button>
+        </form>
+      </Form>
+      {errorMessages != "" && (
+        <Alert variant="destructive" className="w-full">
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{errorMessages}</AlertDescription>
+        </Alert>
+      )}
+    </div>
   );
 }

@@ -2,37 +2,53 @@
 
 import { prisma } from "@/utils/connect";
 
-export const requestNewCourse = async (formData: FormData) => {
-  console.log("requestNewCourse", formData);
+import { z } from "zod";
+import { getTutorCourseRequestSchema_ } from "@/lib/schema";
+import { auth } from "@/utils/auth";
+
+const FormDataSchema = getTutorCourseRequestSchema_();
+
+export const requestNewCourse = async (
+  formData: z.infer<typeof FormDataSchema>
+) => {
   try {
-    const tempUser = await prisma.user.findFirst({ include: { tutor: true } });
-    // if (!tempUser) {
-    //   throw new Error("User not found");
-    // } else {
-    //   console.log(tempUser.tutor?.id);
-    // }
-    // const getCourse = await prisma.allCoursesInSCE.findMany({
-    //   where: {
-    //     courseDepartment: formData.get("courseDepartment") as string,
-    //     courseName: formData.get("courseName") as string,
-    //   },
-    // });
-    // if (getCourse.length === 0) {
-    //   throw new Error("Course not found");
-    // } else {
-    //   console.log(getCourse);
-    // }
-    await prisma.tutorCourseRequest.create({
-      data: {
-        courseName: formData.get("courseName") as string,
-        courseDepartment: formData.get("courseDepartment") as string,
-        tutorId: tempUser?.tutor?.id!,
-        courseGrade: 99,
+    const safeData = FormDataSchema.safeParse(formData);
+    if (!safeData.success) {
+      throw new Error("Invalid form data");
+    }
+
+    const session = await auth();
+    if (!session) {
+      throw new Error("User not found");
+    }
+
+    const tutor = await prisma.tutor.findFirst({
+      where: {
+        userId: session.user.id,
       },
     });
-    return { sucess: "Course Sent Successfully" };
-  } catch (error) {
+
+    if (!tutor) {
+      throw new Error("Tutor not found");
+    }
+
+    try {
+      await prisma.tutorCourseRequest.create({
+        data: {
+          courseName: safeData.data.courseName,
+          courseDepartment: safeData.data.courseDepartment,
+          courseGrade: safeData.data.courseGrade,
+          courseRequestMessage: safeData.data.message,
+          tutorId: tutor.id,
+        },
+      });
+    } catch (e) {
+      throw new Error("Course Request Failed");
+    }
+
+    return { sucess: "Course Request Sent Successfully" };
+  } catch (error: any) {
     console.log(error);
-    throw new Error("Error while creating new course");
+    throw new Error(`Operation failed: ${error.message}`);
   }
 };
