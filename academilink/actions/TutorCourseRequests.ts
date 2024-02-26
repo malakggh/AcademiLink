@@ -26,10 +26,22 @@ export const requestNewCourse = async (
       where: {
         userId: session.user.id,
       },
+      include: {
+        courses: {
+          where: {
+            courseName: safeData.data.courseName,
+            courseDepartment: safeData.data.courseDepartment,
+          },
+        },
+      },
     });
 
     if (!tutor) {
       throw new Error("Tutor not found");
+    }
+
+    if (tutor.courses.length > 0) {
+      throw new Error("You are already tutoring this course");
     }
 
     try {

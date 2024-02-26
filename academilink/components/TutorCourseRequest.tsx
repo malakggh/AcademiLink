@@ -214,15 +214,15 @@ export default function FormRequestExample({
           <Button type="submit" className="w-full">
             Submit
           </Button>
+          {errorMessages != "" && (
+            <Alert variant="destructive" className="w-full">
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{errorMessages}</AlertDescription>
+            </Alert>
+          )}
         </form>
       </Form>
-      {errorMessages != "" && (
-        <Alert variant="destructive" className="w-full">
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{errorMessages}</AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }
