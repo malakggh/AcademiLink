@@ -1,5 +1,5 @@
 "use client";
-import { getTutorWithCourses } from "@/actions/TutorCourses";
+import { getTutorCourses } from "@/actions/TutorCourses";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -19,9 +19,9 @@ export default function TutorCourses() {
     isLoading: coursesIsLoading,
     isError: coursesIsError,
   } = useQuery({
-    queryKey: ["tutorWithCourses"],
+    queryKey: ["tutorCourses"],
     queryFn: async () => {
-      return await getTutorWithCourses();
+      return await getTutorCourses();
     },
   });
   function getDepartments() {

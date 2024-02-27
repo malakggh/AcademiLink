@@ -2,14 +2,13 @@
 
 import { prisma } from "@/utils/connect";
 
-import { z } from "zod";
-import { getTutorCourseRequestSchema_ } from "@/lib/schema";
 import { auth } from "@/utils/auth";
+import { getTutor } from "./Tutors";
 
-export const getTutorWithCourses = async () => {
+export const getTutorCourses = async () => {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session || !session.user.id) {
       throw new Error("User not found");
     }
 
@@ -17,97 +16,66 @@ export const getTutorWithCourses = async () => {
       throw new Error("You don't have tutor permissions");
     }
 
-    const tutor = await prisma.tutor.findFirst({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
-        courses: true,
-      },
-    });
+    let tutor;
+    try {
+      tutor = await prisma.tutor.findUnique({
+        where: {
+          userId: session.user.id,
+        },
+        include: {
+          courses: true,
+        },
+      });
+    } catch (e) {
+      throw new Error("You dont don't have a tutor permissions");
+    }
 
     if (!tutor) {
       throw new Error("You dont don't have a tutor permissions");
     }
 
     return tutor.courses;
-    return [
-      ...tutor.courses,
-      ...tutor.courses,
-      ...tutor.courses,
-      ...tutor.courses,
-      ...tutor.courses,
-      ...tutor.courses,
-    ];
+    // return [
+    //   ...tutor.courses,
+    //   ...tutor.courses,
+    //   ...tutor.courses,
+    //   ...tutor.courses,
+    //   ...tutor.courses,
+    //   ...tutor.courses,
+    // ];
   } catch (error: any) {
     throw new Error(`Operation failed: ${error.message}`);
   }
 };
 
-const FormDataSchema = getTutorCourseRequestSchema_();
-
-export const requestNewCourse = async (
-  formData: z.infer<typeof FormDataSchema>
+export const changeTutorCourseStatus = async (
+  courseName: string,
+  courseDepartment: string,
+  newStatus: boolean
 ) => {
   try {
-    const safeData = FormDataSchema.safeParse(formData);
-    if (!safeData.success) {
-      throw new Error("Invalid form data");
-    }
-
-    const session = await auth();
-    if (!session) {
-      throw new Error("User not found");
-    }
-
-    if (session.user.role !== "TUTOR") {
-      throw new Error("You don't have tutor permissions");
-    }
-
-    const tutor = await prisma.tutor.findFirst({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
-        courses: {
-          where: {
-            courseName: safeData.data.courseName,
-            courseDepartment: safeData.data.courseDepartment,
-          },
-        },
-      },
-    });
-
-    if (!tutor) {
-      throw new Error("You dont don't have a tutor permissions");
-    }
-
-    if (tutor.courses.length > 0) {
-      throw new Error("You are already tutoring this course");
-    }
+    const tutor = await getTutor();
 
     try {
-      const request = await prisma.tutorCourseRequest.create({
+      await prisma.tutorCourse.update({
         data: {
-          courseName: safeData.data.courseName,
-          courseDepartment: safeData.data.courseDepartment,
-          courseGrade: safeData.data.courseGrade,
-          courseRequestMessage: safeData.data.message,
-          tutorId: tutor.id,
+          courseActive: newStatus,
+        },
+        where: {
+          tutorId_courseName_courseDepartment: {
+            tutorId: tutor.id,
+            courseName,
+            courseDepartment,
+          },
         },
       });
       return {
-        sucess:
-          "Course request for \n" +
-          request.courseName +
-          " " +
-          "\nhas been sent successfully",
+        success: "Course status has been updated successfully",
       };
     } catch (e) {
-      throw new Error("Course request failed");
+      throw new Error("Course status update failed");
     }
   } catch (error: any) {
-    console.log(error);
     throw new Error(`Operation failed: ${error.message}`);
   }
 };

@@ -8,6 +8,9 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { LightningBoltIcon } from "@radix-ui/react-icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { changeTutorCourseStatus } from "@/actions/TutorCourses";
+import { useToast } from "../ui/use-toast";
 const DisplayCourses = ({
   courses,
 }: {
@@ -20,6 +23,39 @@ const DisplayCourses = ({
       }[]
     | undefined;
 }) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { mutate, isError } = useMutation({
+    mutationFn: async ({
+      courseName,
+      courseDepartment,
+      newStatus,
+    }: {
+      courseName: string;
+      courseDepartment: string;
+      newStatus: boolean;
+    }) => {
+      return await changeTutorCourseStatus(
+        courseName,
+        courseDepartment,
+        newStatus
+      );
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Error changing course status",
+        description: error.message,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tutorCourses"] });
+      toast({
+        title: "Course status has been updated successfully",
+      });
+    },
+    // todo add onMutate for optimistic updates
+  });
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
       {courses &&
@@ -45,7 +81,13 @@ const DisplayCourses = ({
                 <Switch
                   style={{ direction: "ltr" }}
                   checked={course.courseActive}
-                  onChange={() => {}}
+                  onCheckedChange={() =>
+                    mutate({
+                      courseName: course.courseName,
+                      courseDepartment: course.courseDepartment,
+                      newStatus: !course.courseActive,
+                    })
+                  }
                 />
               </div>
             </CardContent>

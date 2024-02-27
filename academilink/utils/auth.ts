@@ -7,6 +7,7 @@ import { prisma } from "./connect";
 declare module "@auth/core/jwt" {
   interface JWT {
     role: "STUDENT" | "TUTOR" | "MANAGER";
+    id: string;
   }
 }
 
@@ -17,6 +18,7 @@ declare module "next-auth" {
   interface Session {
     user: User & {
       role: "STUDENT" | "TUTOR" | "MANAGER";
+      id: string;
     };
   }
 }
@@ -32,12 +34,14 @@ const config = {
       // console.log("\nsession", session, "\ntoken", token);
       if (token && token.role) {
         session.user.role = token.role;
+        session.user.id = token.id;
       }
       return session;
     },
     jwt({ token, user, trigger, profile, account, session: sessionRequest }) {
-      if (user && user.role) {
+      if (user && user.role && user.id) {
         token.role = user.role;
+        token.id = user.id;
       }
       // console.log(
       //   "token of jwt",
