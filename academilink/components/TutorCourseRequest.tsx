@@ -94,9 +94,9 @@ export default function FormRequestExample({
     {
       condition: true,
       name: "courseDepartment" as nameType,
-      label: "Course Department",
+      label: "מחלקת הקורס",
       key: shouldReset,
-      placeHolder: "Select Course Department",
+      placeHolder: "בחר מחלקה",
       options: allDepartments.map((department) => (
         <SelectItem key={department} value={department}>
           {department}
@@ -106,22 +106,24 @@ export default function FormRequestExample({
     {
       condition: selectedCourseDepartment,
       name: "courseSemester" as nameType,
-      label: "Course Year and Semester",
+      label: "שנה וסמסטר של הקורס",
       key: "courseSemester",
-      placeHolder: "Select Year and Semester",
+      placeHolder: "בחר שנה וסמסטר",
       options: getAllSemesters().map((semester) => (
         <SelectItem key={semester} value={String(semester)}>
-          Year {Math.ceil(semester / 2)}, Semester{" "}
-          {((semester + 1) % 2) + 1 === 1 ? "א" : "ב"}
+          {"שנה " +
+            String(Math.ceil(semester / 2)) +
+            ", סמסטר " +
+            String(((semester + 1) % 2) + 1 === 1 ? "א" : "ב")}
         </SelectItem>
       )),
     },
     {
       condition: selectedCourseSemester != 0,
       name: "courseName" as nameType,
-      label: "Course Name",
+      label: "שם הקורס",
       key: "courseName",
-      placeHolder: "Select Course",
+      placeHolder: "בחר קורס",
       options: allCourses
         .filter(
           (course) =>
@@ -155,12 +157,14 @@ export default function FormRequestExample({
                         <FormLabel>{selectForm.label}</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange}>
-                            <SelectTrigger>
+                            <SelectTrigger style={{ direction: "rtl" }}>
                               <SelectValue
                                 placeholder={selectForm.placeHolder}
                               />
                             </SelectTrigger>
-                            <SelectContent>{selectForm.options}</SelectContent>
+                            <SelectContent style={{ direction: "rtl" }}>
+                              {selectForm.options}
+                            </SelectContent>
                           </Select>
                         </FormControl>
                         <FormMessage />
@@ -177,13 +181,9 @@ export default function FormRequestExample({
             render={({ field }) => {
               return (
                 <FormItem>
-                  <FormLabel>Course Grade</FormLabel>
+                  <FormLabel>{"ציון הקורס"}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Course grade"
-                      type="number"
-                      {...field}
-                    />
+                    <Input placeholder="ציון הקורס" type="number" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -196,9 +196,9 @@ export default function FormRequestExample({
             render={({ field }) => {
               return (
                 <FormItem>
-                  <FormLabel>Message</FormLabel>
+                  <FormLabel>{"הודעה"}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Message" {...field} />
+                    <Input placeholder="הודעה" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
