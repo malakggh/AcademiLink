@@ -5,7 +5,7 @@ export default async function Courses() {
   const allCourses = await getAllCoursesInSCE();
   return (
     <div>
-      <h1>Courses</h1>
+      {/* <h1>Courses</h1> */}
       {/* {allCourses && <TutorCourseRequest allCourses={allCourses} />}
       {!allCourses && <p>Loading...</p>} */}
       {allCourses && <FormRequestExample allCourses={allCourses} />}

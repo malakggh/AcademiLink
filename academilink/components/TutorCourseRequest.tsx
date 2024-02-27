@@ -98,7 +98,7 @@ export default function FormRequestExample({
             render={({ field }) => {
               return (
                 <FormItem>
-                  <FormLabel>Course department</FormLabel>
+                  <FormLabel>Course Department</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} key={shouldReset}>
                       <SelectTrigger>
@@ -154,7 +154,7 @@ export default function FormRequestExample({
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Course name</FormLabel>
+                    <FormLabel>Course Name</FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange}>
                         <SelectTrigger>
@@ -192,7 +192,7 @@ export default function FormRequestExample({
             render={({ field }) => {
               return (
                 <FormItem>
-                  <FormLabel>Course grade</FormLabel>
+                  <FormLabel>Course Grade</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Course grade"
