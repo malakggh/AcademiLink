@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
   SelectValue,
   SelectTrigger,
@@ -31,6 +32,7 @@ export default function FormRequestExample({
 }: {
   allCourses: AllCoursesInSCE[];
 }) {
+  const { toast } = useToast();
   const allDepartments = Array.from(
     new Set(allCourses.map((course) => course.courseDepartment))
   );
@@ -61,17 +63,24 @@ export default function FormRequestExample({
     return Array.from(new Set(semesters));
   }
 
-  const [errorMessages, setErrorMessages] = useState<string>("");
+  const [errorMessages, setErrorMessages] = useState("");
+  const [shouldReset, setShouldReset] = useState(0);
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const result = await requestNewCourse(values);
-      console.log("result", result);
-      console.log(result.sucess);
+      toast({
+        title: "Course Request Sent Successfully",
+        description: result.sucess,
+      });
       form.reset();
+      setShouldReset((prev) => prev + 1); // this is to ensure the select courseDepartment component resets
       setErrorMessages("");
     } catch (error: any) {
+      const message: String = error.message;
       console.log(error.message);
-      setErrorMessages(error.message);
+      setErrorMessages(
+        message.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase())
+      );
       return;
     }
   };
@@ -91,7 +100,7 @@ export default function FormRequestExample({
                 <FormItem>
                   <FormLabel>Course department</FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange}>
+                    <Select onValueChange={field.onChange} key={shouldReset}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Course Department" />
                       </SelectTrigger>
@@ -211,8 +220,13 @@ export default function FormRequestExample({
               );
             }}
           />
-          <Button type="submit" className="w-full">
-            Submit
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "Submitting..." : "Submit"}
           </Button>
           {errorMessages != "" && (
             <Alert variant="destructive" className="w-full">

@@ -22,6 +22,10 @@ export const requestNewCourse = async (
       throw new Error("User not found");
     }
 
+    if (session.user.role !== "TUTOR") {
+      throw new Error("You don't have tutor permissions");
+    }
+
     const tutor = await prisma.tutor.findFirst({
       where: {
         userId: session.user.id,
@@ -37,7 +41,7 @@ export const requestNewCourse = async (
     });
 
     if (!tutor) {
-      throw new Error("Tutor not found");
+      throw new Error("You dont don't have a tutor permissions");
     }
 
     if (tutor.courses.length > 0) {
@@ -45,7 +49,7 @@ export const requestNewCourse = async (
     }
 
     try {
-      await prisma.tutorCourseRequest.create({
+      const request = await prisma.tutorCourseRequest.create({
         data: {
           courseName: safeData.data.courseName,
           courseDepartment: safeData.data.courseDepartment,
@@ -54,11 +58,16 @@ export const requestNewCourse = async (
           tutorId: tutor.id,
         },
       });
+      return {
+        sucess:
+          "Course request for \n" +
+          request.courseName +
+          " " +
+          "\nhas been sent successfully",
+      };
     } catch (e) {
-      throw new Error("Course Request Failed");
+      throw new Error("Course request failed");
     }
-
-    return { sucess: "Course Request Sent Successfully" };
   } catch (error: any) {
     console.log(error);
     throw new Error(`Operation failed: ${error.message}`);
