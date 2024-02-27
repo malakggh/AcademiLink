@@ -84,7 +84,57 @@ export default function FormRequestExample({
       return;
     }
   };
-
+  type nameType =
+    | "courseDepartment"
+    | "message"
+    | "courseSemester"
+    | "courseName"
+    | "courseGrade";
+  const selectForms = [
+    {
+      condition: true,
+      name: "courseDepartment" as nameType,
+      label: "Course Department",
+      key: shouldReset,
+      placeHolder: "Select Course Department",
+      options: allDepartments.map((department) => (
+        <SelectItem key={department} value={department}>
+          {department}
+        </SelectItem>
+      )),
+    },
+    {
+      condition: selectedCourseDepartment,
+      name: "courseSemester" as nameType,
+      label: "Course Year and Semester",
+      key: "courseSemester",
+      placeHolder: "Select Year and Semester",
+      options: getAllSemesters().map((semester) => (
+        <SelectItem key={semester} value={String(semester)}>
+          Year {Math.ceil(semester / 2)}, Semester{" "}
+          {((semester + 1) % 2) + 1 === 1 ? "א" : "ב"}
+        </SelectItem>
+      )),
+    },
+    {
+      condition: selectedCourseSemester != 0,
+      name: "courseName" as nameType,
+      label: "Course Name",
+      key: "courseName",
+      placeHolder: "Select Course",
+      options: allCourses
+        .filter(
+          (course) =>
+            course.courseDepartment === selectedCourseDepartment &&
+            course.courseSemester == selectedCourseSemester
+        )
+        .map((course) => (
+          <SelectItem key={course.courseName} value={course.courseName}>
+            {course.courseName}
+          </SelectItem>
+        )),
+    },
+  ];
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
       <Form {...form}>
@@ -92,98 +142,33 @@ export default function FormRequestExample({
           onSubmit={form.handleSubmit(handleSubmit)}
           className="max-w-md w-full flex flex-col gap-4"
         >
-          <FormField
-            control={form.control}
-            name="courseDepartment"
-            render={({ field }) => {
-              return (
-                <FormItem>
-                  <FormLabel>Course Department</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} key={shouldReset}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Course Department" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {allDepartments.map((department) => (
-                          <SelectItem key={department} value={department}>
-                            {department}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-          {selectedCourseDepartment && (
-            <FormField
-              control={form.control}
-              name="courseSemester"
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel>Course Year and Semester</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Year and Semester" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {getAllSemesters().map((semester) => (
-                            <SelectItem key={semester} value={String(semester)}>
-                              Year {Math.ceil(semester / 2)}, Semester{" "}
-                              {((semester + 1) % 2) + 1 === 1 ? "א" : "ב"}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
-          )}
-          {selectedCourseSemester != 0 && (
-            <FormField
-              control={form.control}
-              name="courseName"
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel>Course Name</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Course" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {allCourses
-                            .filter(
-                              (course) =>
-                                course.courseDepartment ===
-                                  selectedCourseDepartment &&
-                                course.courseSemester == selectedCourseSemester
-                            )
-                            .map((course) => (
-                              <SelectItem
-                                key={course.courseName}
-                                value={course.courseName}
-                              >
-                                {course.courseName}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
+          {selectForms.map(
+            (selectForm) =>
+              selectForm.condition && (
+                <FormField
+                  key={selectForm.key}
+                  control={form.control}
+                  name={selectForm.name}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>{selectForm.label}</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder={selectForm.placeHolder}
+                              />
+                            </SelectTrigger>
+                            <SelectContent>{selectForm.options}</SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+              )
           )}
 
           <FormField
