@@ -54,10 +54,14 @@ export const changeTutorCourseStatus = async (
   newStatus: boolean
 ) => {
   try {
+    // console.log("got new request at time " + new Date().toTimeString());
+    // // add 2 seconds delay to simulate network latency
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
+
     const tutor = await getTutor();
 
     try {
-      await prisma.tutorCourse.update({
+      const course = await prisma.tutorCourse.update({
         data: {
           courseActive: newStatus,
         },

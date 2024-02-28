@@ -11,6 +11,8 @@ import { LightningBoltIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeTutorCourseStatus } from "@/actions/TutorCourses";
 import { useToast } from "../ui/use-toast";
+import { useState } from "react";
+import { LoadingSpinner } from "../ui/other/LoadingSpinner";
 const DisplayCourses = ({
   courses,
 }: {
@@ -25,7 +27,8 @@ const DisplayCourses = ({
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { mutate, isError } = useMutation({
+  const [loadingCourses, setLoadingCourses] = useState<string[]>([]);
+  const { mutate } = useMutation({
     mutationFn: async ({
       courseName,
       courseDepartment,
@@ -55,6 +58,20 @@ const DisplayCourses = ({
       });
     },
     // todo add onMutate for optimistic updates
+    onMutate(variables) {
+      setLoadingCourses((prev) => [
+        ...prev,
+        `${variables.courseName}${variables.courseDepartment}`,
+      ]);
+      return variables;
+    },
+    onSettled(variables, error, data) {
+      setLoadingCourses((prev) =>
+        prev.filter(
+          (course) => course !== `${data.courseName}${data.courseDepartment}`
+        )
+      );
+    },
   });
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -78,6 +95,11 @@ const DisplayCourses = ({
                     {"כרגע מלמד"}
                   </p>
                 </div>
+
+                {loadingCourses.includes(
+                  `${course.courseName}${course.courseDepartment}`
+                ) && <LoadingSpinner className={""} />}
+
                 <Switch
                   style={{ direction: "ltr" }}
                   checked={course.courseActive}
@@ -88,6 +110,9 @@ const DisplayCourses = ({
                       newStatus: !course.courseActive,
                     })
                   }
+                  disabled={loadingCourses.includes(
+                    `${course.courseName}${course.courseDepartment}`
+                  )}
                 />
               </div>
             </CardContent>
