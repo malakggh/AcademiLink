@@ -7,6 +7,10 @@ import { getTutor } from "./Tutors";
 
 export const getTutorCourses = async () => {
   try {
+    // console.log("got new request at time " + new Date().toTimeString());
+    // // add 2 seconds delay to simulate network latency
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
+    // throw new Error("User not found");
     const session = await auth();
     if (!session || !session.user.id) {
       throw new Error("User not found");

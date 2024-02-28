@@ -13,6 +13,7 @@ import {
 import DisplayCourses from "./DisplayCourses";
 import { useState } from "react";
 import { Label } from "../ui/label";
+import { ErrorAlert, LoadingAlert } from "@/components/ui/other/CustomAlert";
 
 export default function TutorCourses() {
   const {
@@ -64,15 +65,19 @@ export default function TutorCourses() {
         </Select>
       </div>
 
-      <DisplayCourses
-        courses={
-          selectedDepartment === "all"
-            ? courses
-            : courses?.filter(
-                (course) => course.courseDepartment === selectedDepartment
-              )
-        }
-      />
+      {coursesIsLoading && <LoadingAlert loadingMessage="טוען קורסים" />}
+      {coursesIsError && <ErrorAlert errorMessage="שגיאה בטעינת הקורסים" />}
+      {courses && (
+        <DisplayCourses
+          courses={
+            selectedDepartment === "all"
+              ? courses
+              : courses?.filter(
+                  (course) => course.courseDepartment === selectedDepartment
+                )
+          }
+        />
+      )}
     </div>
   );
 }

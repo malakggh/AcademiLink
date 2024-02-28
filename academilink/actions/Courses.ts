@@ -6,7 +6,8 @@ export const getAllCoursesInSCE = async () => {
   try {
     const allCourses = await prisma.allCoursesInSCE.findMany();
     return allCourses;
-  } catch (error) {
+  } catch (error: any) {
+    console.log("Error while fetching all courses", error.message);
     throw new Error("Error while fetching all courses");
   }
 };

@@ -27,6 +27,7 @@ import { getTutorCourseRequestSchema } from "@/lib/schema";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import { ErrorAlert } from "@/components/ui/other/CustomAlert";
 export default function FormRequestExample({
   allCourses,
 }: {
@@ -210,13 +211,7 @@ export default function FormRequestExample({
         >
           {form.formState.isSubmitting ? "Submitting..." : "Submit"}
         </Button>
-        {errorMessages != "" && (
-          <Alert variant="destructive" className="w-full">
-            <ExclamationTriangleIcon className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{errorMessages}</AlertDescription>
-          </Alert>
-        )}
+        {errorMessages != "" && <ErrorAlert errorMessage={errorMessages} />}
       </form>
     </Form>
   );
