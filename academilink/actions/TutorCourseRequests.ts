@@ -54,3 +54,20 @@ export const requestNewCourse = async (
     throw new Error(`Operation failed: ${error.message}`);
   }
 };
+
+export const getAllTutorsCourseRequests = async () => {
+  try {
+    const groupedRequests = await prisma.tutorCourseRequest.groupBy({
+      by: ["courseName", "courseDepartment"],
+      _count: true, // Counts the number of requests in each group
+      _avg: {
+        courseGrade: true, // Averages the courseGrade for requests in each group
+      },
+      // You can also add _sum, _min, _max, etc., for other aggregations.
+    });
+    return groupedRequests;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(`Operation failed: Can not get requests`);
+  }
+};
