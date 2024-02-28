@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import DisplayCourses from "./DisplayCourses";
 import { useState } from "react";
+import { Label } from "../ui/label";
 
 export default function TutorCourses() {
   const {
@@ -34,31 +35,35 @@ export default function TutorCourses() {
 
   return (
     <div style={{ direction: "rtl" }}>
-      <Select
-        value={selectedDepartment}
-        onValueChange={(value) => setSelectedDepartment(value)}
-      >
-        <SelectTrigger className="w-[180px]" style={{ direction: "rtl" }}>
-          <SelectValue placeholder="בחר מחלקה" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {/* <SelectLabel>{"מחלקות"}</SelectLabel> */}
-            <SelectItem value="all" style={{ direction: "rtl" }}>
-              {"כל המחלקות"}
-            </SelectItem>
-            {getDepartments().map((department) => (
-              <SelectItem
-                style={{ direction: "rtl" }}
-                key={department.department}
-                value={department.department}
-              >
-                {department.department}
+      <div className="pb-4 flex">
+        <Label className="text-lg px-2 pt-1">{"בחר מחלקה"}</Label>
+        <Select
+          value={selectedDepartment}
+          onValueChange={(value) => setSelectedDepartment(value)}
+        >
+          <SelectTrigger className="w-[180px]" style={{ direction: "rtl" }}>
+            <SelectValue placeholder="בחר מחלקה" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {/* <SelectLabel>{"מחלקות"}</SelectLabel> */}
+              <SelectItem value="all" style={{ direction: "rtl" }}>
+                {"כל המחלקות"}
               </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+              {getDepartments().map((department) => (
+                <SelectItem
+                  style={{ direction: "rtl" }}
+                  key={department.department}
+                  value={department.department}
+                >
+                  {department.department}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
       <DisplayCourses
         courses={
           selectedDepartment === "all"

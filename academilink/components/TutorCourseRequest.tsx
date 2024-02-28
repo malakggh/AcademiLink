@@ -138,90 +138,86 @@ export default function FormRequestExample({
     },
   ];
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="max-w-md w-full flex flex-col gap-4"
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="max-w-md w-full flex flex-col gap-4"
+      >
+        {selectForms.map(
+          (selectForm) =>
+            selectForm.condition && (
+              <FormField
+                key={selectForm.key}
+                control={form.control}
+                name={selectForm.name}
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>{selectForm.label}</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger style={{ direction: "rtl" }}>
+                            <SelectValue placeholder={selectForm.placeHolder} />
+                          </SelectTrigger>
+                          <SelectContent style={{ direction: "rtl" }}>
+                            {selectForm.options}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            )
+        )}
+
+        <FormField
+          control={form.control}
+          name="courseGrade"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>{"ציון הקורס"}</FormLabel>
+                <FormControl>
+                  <Input placeholder="ציון הקורס" type="number" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
+        <FormField
+          control={form.control}
+          name="message"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>{"הודעה"}</FormLabel>
+                <FormControl>
+                  <Input placeholder="הודעה" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={form.formState.isSubmitting}
         >
-          {selectForms.map(
-            (selectForm) =>
-              selectForm.condition && (
-                <FormField
-                  key={selectForm.key}
-                  control={form.control}
-                  name={selectForm.name}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>{selectForm.label}</FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange}>
-                            <SelectTrigger style={{ direction: "rtl" }}>
-                              <SelectValue
-                                placeholder={selectForm.placeHolder}
-                              />
-                            </SelectTrigger>
-                            <SelectContent style={{ direction: "rtl" }}>
-                              {selectForm.options}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              )
-          )}
-
-          <FormField
-            control={form.control}
-            name="courseGrade"
-            render={({ field }) => {
-              return (
-                <FormItem>
-                  <FormLabel>{"ציון הקורס"}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ציון הקורס" type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-          <FormField
-            control={form.control}
-            name="message"
-            render={({ field }) => {
-              return (
-                <FormItem>
-                  <FormLabel>{"הודעה"}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="הודעה" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-          {errorMessages != "" && (
-            <Alert variant="destructive" className="w-full">
-              <ExclamationTriangleIcon className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{errorMessages}</AlertDescription>
-            </Alert>
-          )}
-        </form>
-      </Form>
-    </div>
+          {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+        </Button>
+        {errorMessages != "" && (
+          <Alert variant="destructive" className="w-full">
+            <ExclamationTriangleIcon className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{errorMessages}</AlertDescription>
+          </Alert>
+        )}
+      </form>
+    </Form>
   );
 }
