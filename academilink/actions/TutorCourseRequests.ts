@@ -80,13 +80,21 @@ export const requestNewCourse = async (
 
 export const getAllTutorsCourseRequests = async () => {
   try {
-    const groupedRequests = await prisma.tutorCourseRequest.groupBy({
-      by: ["courseName", "courseDepartment"],
-      _count: true, // Counts the number of requests in each group
-      _avg: {
-        courseGrade: true, // Averages the courseGrade for requests in each group
+    const groupedRequests = await prisma.tutorCourseRequest.findMany({
+      orderBy: {
+        date: "desc",
       },
-      // You can also add _sum, _min, _max, etc., for other aggregations.
+      include: {
+        tutor: {
+          select: {
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
     return groupedRequests;
   } catch (error: any) {
