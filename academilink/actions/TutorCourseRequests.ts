@@ -84,7 +84,12 @@ export const getAllTutorsCourseRequests = async () => {
       orderBy: {
         date: "desc",
       },
-      include: {
+      select: {
+        courseName: true,
+        courseDepartment: true,
+        courseGrade: true,
+        courseRequestMessage: true,
+        date: true,
         tutor: {
           select: {
             user: {
@@ -94,6 +99,7 @@ export const getAllTutorsCourseRequests = async () => {
             },
           },
         },
+        status: false,
       },
     });
     return groupedRequests;

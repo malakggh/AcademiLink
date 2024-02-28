@@ -1,4 +1,4 @@
-import ManagerTutorRequests from "@/components/ManagerTutorRequests";
+import ManagerTutorRequests from "@/components/ManagerTutorRequests/ManagerTutorRequests";
 import { auth } from "@/utils/auth";
 
 export default async function Courses() {
