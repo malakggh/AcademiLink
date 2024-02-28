@@ -126,8 +126,14 @@ model TutorCourseRequest {
   courseRequestMessage              String?
 
   date                              DateTime @default(now())
+  status                            CourseRequestStatus @default(PENDING)
 }
 
+enum CourseRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
 
 
 

@@ -27,7 +27,11 @@ export const getTutorCourses = async () => {
           userId: session.user.id,
         },
         include: {
-          courses: true,
+          courses: {
+            orderBy: {
+              courseName: "asc",
+            },
+          },
         },
       });
     } catch (e) {

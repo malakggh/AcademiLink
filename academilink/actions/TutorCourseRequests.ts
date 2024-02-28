@@ -21,12 +21,35 @@ export const requestNewCourse = async (
       safeData.data.courseName,
       safeData.data.courseDepartment
     );
+
     if (!tutor) {
       throw new Error("You don't have tutor permissions");
     }
 
     if (tutor.courses.length > 0) {
       throw new Error("You are already tutoring this course");
+    }
+
+    try {
+      const existingPendingRequest = await prisma.tutorCourseRequest.findFirst({
+        where: {
+          tutorId: tutor.id,
+          courseName: safeData.data.courseName,
+          courseDepartment: safeData.data.courseDepartment,
+          status: "PENDING",
+        },
+      });
+      if (existingPendingRequest) {
+        throw new Error("You already have a pending request for this course");
+      }
+    } catch (error: any) {
+      if (
+        error.message !== "You already have a pending request for this course"
+      ) {
+        throw new Error("Operation failed");
+      } else {
+        throw new Error(error.message);
+      }
     }
 
     try {
