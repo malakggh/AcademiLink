@@ -95,6 +95,7 @@ export const getAllTutorsCourseRequests = async () => {
             user: {
               select: {
                 name: true,
+                id: true,
               },
             },
           },

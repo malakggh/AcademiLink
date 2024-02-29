@@ -1,3 +1,4 @@
+import { getAllTutorsCourseRequests } from "@/actions/TutorCourseRequests";
 import { AllCoursesInSCE } from "@prisma/client";
 import * as z from "zod";
 
@@ -62,3 +63,8 @@ export const getTutorCourseRequestSchema_ = () => {
   });
   return formSchema;
 };
+
+export type tutorRequestsArrayNullableType =
+  typeof getAllTutorsCourseRequests extends () => Promise<infer T> ? T : never;
+export type tutorRequestObjectNotNullableType =
+  NonNullable<tutorRequestsArrayNullableType>[number];

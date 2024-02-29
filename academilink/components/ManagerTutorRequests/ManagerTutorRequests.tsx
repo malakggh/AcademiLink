@@ -4,9 +4,9 @@ import { getAllTutorsCourseRequests } from "@/actions/TutorCourseRequests";
 import { useQuery } from "@tanstack/react-query";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "./data-table";
+import { DataTable } from "../ui/table/data-table";
 
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import { TriangleDownIcon } from "@radix-ui/react-icons";
 
@@ -20,6 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTableColumnHeader } from "../ui/table/DataTableColumnHeader";
+import { ErrorAlert, LoadingAlert } from "../ui/other/CustomAlert";
+import DecisionButton from "./DecisionButton";
+import { tutorRequestObjectNotNullableType } from "@/lib/schema";
 
 export default function ManagerTutorRequests() {
   const {
@@ -32,9 +35,8 @@ export default function ManagerTutorRequests() {
       return await getAllTutorsCourseRequests();
     },
   });
-  type tutorRequestsType = NonNullable<typeof tutorRequests>[number];
 
-  const columns: ColumnDef<tutorRequestsType>[] = [
+  const columns: ColumnDef<tutorRequestObjectNotNullableType>[] = [
     {
       accessorKey: "date",
       header: ({ column }) => (
@@ -121,27 +123,10 @@ export default function ManagerTutorRequests() {
         const request = row.original;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(request.courseName)
-                }
-              >
-                Copy course name
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View customer</DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <DecisionButton request={request} accept={true} />
+            <DecisionButton request={request} accept={false} />
+          </>
         );
       },
     },
@@ -149,6 +134,12 @@ export default function ManagerTutorRequests() {
 
   return (
     <div className="container mx-auto py-10">
+      {tutorRequestsIsLoading && (
+        <LoadingAlert loadingMessage="טוען בקשות מתגברים" />
+      )}
+      {tutorRequestsIsError && (
+        <ErrorAlert errorMessage="שגיאה בטעינת הבקשות מתגברים" />
+      )}
       {tutorRequests && <DataTable columns={columns} data={tutorRequests} />}
     </div>
   );
