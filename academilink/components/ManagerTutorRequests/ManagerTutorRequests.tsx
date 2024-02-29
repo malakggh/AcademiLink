@@ -125,11 +125,6 @@ export default function ManagerTutorRequests() {
       id: "actions",
       cell: ({ row }) => {
         const request = row.original;
-        console.log(
-          "rerendring decision button",
-          request.courseName,
-          request.courseDepartment
-        );
         return (
           <DecisionButton
             request={request}
