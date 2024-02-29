@@ -17,7 +17,8 @@ export default function ManagerTutorRequests() {
       return await getAllTutorsCourseRequests();
     },
   });
-  type tutorRequestsType = typeof tutorRequests;
+  type tutorRequestsType = NonNullable<typeof tutorRequests>[number];
+
   const columns: ColumnDef<tutorRequestsType>[] = [
     {
       accessorKey: "tutor.user.name",
@@ -47,9 +48,7 @@ export default function ManagerTutorRequests() {
 
   return (
     <div className="container mx-auto py-10">
-      {tutorRequests && (
-        <DataTable columns={columns} data={tutorRequests || []} />
-      )}
+      {tutorRequests && <DataTable columns={columns} data={tutorRequests} />}
     </div>
   );
 }
