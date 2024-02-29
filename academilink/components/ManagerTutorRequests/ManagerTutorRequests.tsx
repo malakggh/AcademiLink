@@ -23,6 +23,7 @@ import { DataTableColumnHeader } from "../ui/table/DataTableColumnHeader";
 import { ErrorAlert, LoadingAlert } from "../ui/other/CustomAlert";
 import DecisionButton from "./DecisionButton";
 import { tutorRequestObjectNotNullableType } from "@/lib/schema";
+import { useState } from "react";
 
 export default function ManagerTutorRequests() {
   const {
@@ -34,7 +35,10 @@ export default function ManagerTutorRequests() {
     queryFn: async () => {
       return await getAllTutorsCourseRequests();
     },
+    refetchOnWindowFocus: false,
   });
+
+  const [handledRequests, setHandledRequests] = useState<string[]>([]);
 
   const columns: ColumnDef<tutorRequestObjectNotNullableType>[] = [
     {
@@ -121,12 +125,19 @@ export default function ManagerTutorRequests() {
       id: "actions",
       cell: ({ row }) => {
         const request = row.original;
-
+        console.log(
+          "rerendring decision button",
+          request.courseName,
+          request.courseDepartment
+        );
         return (
-          <>
-            <DecisionButton request={request} accept={true} />
-            <DecisionButton request={request} accept={false} />
-          </>
+          <DecisionButton
+            request={request}
+            handled={handledRequests.includes(request.id)}
+            onHandled={() => {
+              setHandledRequests((prev) => [...prev, request.id]);
+            }}
+          />
         );
       },
     },

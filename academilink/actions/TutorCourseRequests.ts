@@ -85,6 +85,7 @@ export const getAllTutorsCourseRequests = async () => {
         date: "desc",
       },
       select: {
+        id: true,
         courseName: true,
         courseDepartment: true,
         courseGrade: true,
@@ -101,6 +102,9 @@ export const getAllTutorsCourseRequests = async () => {
           },
         },
         status: false,
+      },
+      where: {
+        status: "PENDING",
       },
     });
     return groupedRequests;
