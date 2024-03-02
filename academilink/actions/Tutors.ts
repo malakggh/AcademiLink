@@ -1,3 +1,4 @@
+"use server";
 import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/connect";
 
