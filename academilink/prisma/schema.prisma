@@ -72,11 +72,82 @@ enum UserRole {
 }
 
 model Student {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  // Additional fields specific to students
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  
+  department  String
+  semesters   StudentSemester[]
 }
+
+model StudentSemester {
+  startingDate      DateTime
+  studentId         String
+  student           Student  @relation(fields: [studentId], references: [id])
+  @@id([startingDate, studentId])
+
+  courses           StudentSemesterCourse[]
+  sessionRequests   StudentSessionRequest[]
+  totalHours        Int @default(12)
+}
+
+model StudentSemesterCourse {
+  semesterStartingDate DateTime
+  studentId            String
+  studentSemester      StudentSemester @relation(fields: [semesterStartingDate, studentId], references: [startingDate, studentId])
+
+  courseName           String
+  courseDepartment     String
+  course               AllCoursesInSCE @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
+  @@id([semesterStartingDate, studentId, courseName, courseDepartment])
+}
+
+
+model StudentSessionRequest {
+  id                                String @id @default(cuid())
+  
+  studentId                         String
+  semesterStartingDate              DateTime
+  studentSemester                   StudentSemester @relation(fields: [semesterStartingDate, studentId], references: [startingDate, studentId])
+
+  courseName                        String
+  courseDepartment                  String
+  course                            AllCoursesInSCE @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
+  
+  progress                          StudentSessionRequestProgress[]      
+
+  tutorId                           String?
+  chosenTutor                       Tutor? @relation(fields: [tutorId], references: [id]) // the tutor that the student chose after communicating
+
+  hours                             Int
+  
+  status                            StudentSessionRequestStatus @default(PENDING)
+}
+
+enum StudentSessionRequestStatus {
+  PENDING     // by default
+  COMPLETED   // when the chosen tutor confirms that the reinforcement session is completed
+  CANCELED     // when the student cancels the request
+}
+
+model StudentSessionRequestProgress {
+  requestId                           String
+  request                             StudentSessionRequest  @relation(fields: [requestId], references: [id])
+
+  tutorId                             String
+  tutor                               Tutor  @relation(fields: [tutorId], references: [id])
+
+  @@id([requestId, tutorId])
+
+  tutorResponse                       TutorResponse @default(PENDING)
+}
+
+enum TutorResponse {
+  PENDING     // by default
+  ACCEPTED    // when the tutor accepts the request and they start communicating
+  REJECTED    // when the tutor rejects the request
+}
+
 
 model Manager {
   id        String   @id @default(cuid())
@@ -86,21 +157,25 @@ model Manager {
 }
 
 model AllCoursesInSCE{
-  courseName        String
-  courseDepartment  String
+  courseName                String
+  courseDepartment          String
   // courseName and courseDepartment are the primary key
   @@id([courseName, courseDepartment])
-  courseSemester    Int
-  tutorCourses      TutorCourse[]
-  tutorCourseRequests TutorCourseRequest[]
+  courseSemester            Int
+  tutorCourses              TutorCourse[]
+  tutorCourseRequests       TutorCourseRequest[]
+  studentSemesterCourses    StudentSemesterCourse[]
+  studentSessionRequests    StudentSessionRequest[]
 }
 
 model Tutor {
-  id              String            @id @default(cuid())
-  userId          String            @unique
-  user            User              @relation(fields: [userId], references: [id])
-  courses         TutorCourse[]
-  requests        TutorCourseRequest[]
+  id                                  String  @id @default(cuid())
+  userId                              String  @unique
+  user                                User  @relation(fields: [userId], references: [id])
+  courses                             TutorCourse[]
+  requests                            TutorCourseRequest[]
+  potentialStudentSessionRequests     StudentSessionRequestProgress[]
+  studentSessionRequests              StudentSessionRequest[]
 }
 
 model TutorCourse {
