@@ -176,6 +176,14 @@ model Tutor {
   requests                            TutorCourseRequest[]
   potentialStudentSessionRequests     StudentSessionRequestProgress[]
   studentSessionRequests              StudentSessionRequest[]
+  preferredTeachingMethod             PreferredTeachingMethod @default(BOTH)
+  availabilityFlags                   Int @default(0) // 1 for Sunday, 2 for Monday, 4 for Tuesday, 8 for Wednesday, 16 for Thursday, 32 for Friday, 64 for Saturday
+}
+
+enum PreferredTeachingMethod {
+  ZOOM
+  FRONTAL
+  BOTH
 }
 
 model TutorCourse {
