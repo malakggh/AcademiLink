@@ -1,3 +1,5 @@
+"use server";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import TutorPreferredTeachingMethod from "@/components/TutorPreferredTeachingMethod";
