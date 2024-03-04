@@ -1,5 +1,5 @@
 export enum PreferredTeachingMethods {
-  ZOOM = "ZOOM",
-  FRONTAL = "FRONTAL",
-  BOTH = "BOTH",
+  זום = "ZOOM",
+  פרונטלי = "FRONTAL",
+  שניהם = "BOTH",
 }

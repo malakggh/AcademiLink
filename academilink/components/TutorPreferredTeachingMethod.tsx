@@ -52,8 +52,6 @@ const TutorPreferredTeachingMethod = () => {
     },
   });
 
-  const preferredTeachingMethodsArray = Object.values(PreferredTeachingMethods);
-
   return (
     <div>
       {isLoading && <LoadingAlert loadingMessage=" טוען " />}
@@ -69,13 +67,15 @@ const TutorPreferredTeachingMethod = () => {
             }}
             disabled={isPending}
           >
-            {preferredTeachingMethodsArray.map((option) => (
-              <div className="flex items-center space-x-2" key={option}>
-                <RadioGroupItem value={option} id={option} />
-                <Label htmlFor={option}>{option}</Label>
-                {isPending && <LoadingSpinner />}
-              </div>
-            ))}
+            {Object.entries(PreferredTeachingMethods).map(
+              ([optionHe, optionEn]) => (
+                <div className="flex items-center space-x-2" key={optionEn}>
+                  <RadioGroupItem value={optionEn} id={optionEn} />
+                  <Label htmlFor={optionEn}>{optionHe}</Label>
+                  {isPending && <LoadingSpinner />}
+                </div>
+              )
+            )}
           </RadioGroup>
         </>
       )}

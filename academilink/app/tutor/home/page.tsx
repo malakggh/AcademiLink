@@ -10,7 +10,12 @@ const TutorPage = () => {
       <Button asChild>
         <Link href="/tutor/courses">{"עמוד הקורסים"}</Link>
       </Button>
-      <TutorPreferredTeachingMethod />
+      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+        {"שיטת הלימוד"}
+      </h2>
+      <div className="p-4">
+        <TutorPreferredTeachingMethod />
+      </div>
     </>
   );
 };
