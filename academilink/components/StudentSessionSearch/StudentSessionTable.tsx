@@ -1,21 +1,23 @@
-import { getStudentSessions } from "@/actions/StudentSession";
 import { useQuery } from "@tanstack/react-query";
 import { ErrorAlert, LoadingAlert } from "../ui/other/CustomAlert";
+import { getAllAvailableTutorsForCourse } from "@/actions/StudentSession";
 
 export default function StudentSessionTable({
-  courseName,
+  selectedData: { courseName, hours },
+  department,
 }: {
-  courseName: string;
+  selectedData: { courseName: string; hours: number };
+  department: string;
 }) {
   const {
-    data: studentSessions,
+    data: tutors,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["studentSessions", courseName],
+    queryKey: ["TutorsForCourse", courseName, department],
     queryFn: async () => {
-      return await getStudentSessions("courseName");
+      return await getAllAvailableTutorsForCourse(courseName, department);
     },
     refetchOnWindowFocus: false,
   });
@@ -24,8 +26,7 @@ export default function StudentSessionTable({
       {isLoading && <LoadingAlert loadingMessage=" טוען " />}
       {isError && <ErrorAlert errorMessage={error.message} />}
       <h1>
-        StudentSessionTable
-        {courseName}
+        {courseName}-{hours}-{tutors && JSON.stringify(tutors)}
       </h1>
     </>
   );

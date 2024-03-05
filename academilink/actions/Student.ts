@@ -15,20 +15,28 @@ export const getStudentCourses = async () => {
         where: {
           userId: session.user.id,
         },
-        include: {
+        select: {
           // Include the last semester and get its courses
           semesters: {
             orderBy: {
               startingDate: "desc",
             },
             take: 1,
-            include: {
+            select: {
               courses: true,
+              totalHours: true,
             },
           },
+          department: true,
         },
       });
-      return student.semesters[0].courses.map((course) => course.courseName);
+      return {
+        courses: student.semesters[0].courses.map(
+          (course) => course.courseName
+        ),
+        department: student.department,
+        totalHours: student.semesters[0].totalHours,
+      };
     } catch (error: any) {
       console.log(error.message);
       throw new Error("Cant find student courses");

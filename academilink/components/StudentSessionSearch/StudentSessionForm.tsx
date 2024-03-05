@@ -19,15 +19,22 @@ import {
   SelectItem,
   Select,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import StudentSessionTable from "./StudentSessionTable";
+import { useState } from "react";
 export default function StudentSessionForm({
   studentCourses,
+  department,
+  totalHours,
 }: {
   studentCourses: string[];
+  department: string;
+  totalHours: number;
 }) {
   const formSchema = z
     .object({
       courseName: z.string(),
+      hours: z.coerce.number().min(1).max(totalHours),
     })
     .refine(
       (data) => {
@@ -37,27 +44,39 @@ export default function StudentSessionForm({
         message: "הקורס שבחרת אינו קיים במערכת",
         path: ["courseName"],
       }
+    )
+    .refine(
+      // check if hours is int and not float
+      (data) => {
+        return Number.isInteger(data.hours);
+      },
+      {
+        message: "שעות חייבות להיות מספר שלם",
+        path: ["hours"],
+      }
     );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       courseName: "",
+      hours: 3,
     },
   });
 
-  const selectedCourse = form.watch("courseName");
-  // const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-  //   console.log(values, selectedCourse);
-  //   // render StudentSessionTable
-  //   return <StudentSessionTable courseName={values.courseName} />;
-  // };
+  const [selectedData, setSelectedData] =
+    useState<z.infer<typeof formSchema>>();
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    setSelectedData(values);
+    // render StudentSessionTable
+    // return <StudentSessionTable courseName={values.courseName} />;
+  };
 
   return (
     <>
       <Form {...form}>
         <form
           className="max-w-md w-full flex flex-col gap-4"
-          // onSubmit={form.handleSubmit(handleSubmit)}
+          onSubmit={form.handleSubmit(handleSubmit)}
         >
           <FormField
             control={form.control}
@@ -85,9 +104,37 @@ export default function StudentSessionForm({
               );
             }}
           />
+          <FormField
+            control={form.control}
+            name={"hours"}
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>{"שעות"}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="שעות" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "מחפש..." : "חפש מתגברים"}
+          </Button>
         </form>
       </Form>
-      {selectedCourse && <StudentSessionTable courseName={selectedCourse} />}
+      {selectedData && (
+        <StudentSessionTable
+          selectedData={selectedData}
+          department={department}
+        />
+      )}
     </>
   );
 }
