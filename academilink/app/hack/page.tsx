@@ -1,3 +1,4 @@
+'use client'
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/utils/connect";
 
@@ -39,20 +40,25 @@ const courses = [
   },
 ];
 
-const page = async () => {
-  try {
-    await prisma.allCoursesInSCE.createMany({
-      data: courses,
-    });
-  } catch (error: any) {
-    throw new Error(`Operation failed: ${error.message}`);
-  }
+const page = () => {
 
   return (
     <div>
-      {/* <Button size="lg" onClick={createTutorCourse}>
-        Create Tutor Course
-      </Button> */}
+      <Button size="lg" onClick={
+        async () => {
+          try {
+            await prisma.allCoursesInSCE.createMany({
+              data: courses,
+            });
+          } catch (error: any) {
+            throw new Error(`Operation failed: ${error.message}`);
+          }
+        }
+      }>
+        Create Courses
+      </Button>
+      
+      
     </div>
   );
 };
