@@ -1,7 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { ErrorAlert, LoadingAlert } from "../ui/other/CustomAlert";
 import { getAllAvailableTutorsForCourse } from "@/actions/StudentSession";
-
+import { Button } from "@/components/ui/button";
+import { DataTableColumnHeader } from "../ui/table/DataTableColumnHeader";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "../ui/table/data-table";
+import { $Enums } from "@prisma/client";
+import { decodeAvailability } from "@/lib/functions";
+import { StudentSendSessionRequestButton } from "./StudentSendSessionRequestButton";
 export default function StudentSessionTable({
   selectedData: { courseName, hours },
   department,
@@ -21,13 +27,73 @@ export default function StudentSessionTable({
     },
     refetchOnWindowFocus: false,
   });
+
+  type tableColumnsType = {
+    id: string;
+    user: {
+      name: string;
+      email: string;
+    };
+    preferredTeachingMethod: $Enums.PreferredTeachingMethod;
+    availabilityFlags: number;
+  };
+
+  const columns: ColumnDef<tableColumnsType>[] = [
+    {
+      accessorKey: "user.name",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="שם המתרגל" />
+      ),
+    },
+    {
+      accessorKey: "user.email",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="אימייל" />
+      ),
+    },
+    {
+      accessorKey: "preferredTeachingMethod",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="שיטת הוראה" />
+      ),
+      cell: ({ row }) => {
+        const preferredTeachingMethod = row.original.preferredTeachingMethod;
+        return <>{preferredTeachingMethod}</>;
+      },
+    },
+    {
+      accessorKey: "availabilityFlags",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="זמינות" />
+      ),
+      cell: ({ row }) => {
+        const availabilityFlags = row.original.availabilityFlags;
+        const days = decodeAvailability(availabilityFlags);
+
+        return <>{days.length > 0 ? days.join(", ") : "לא עדכן זמינות"}</>;
+      },
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const request = row.original;
+        return (
+          <StudentSendSessionRequestButton
+            tutorId={request.id}
+            courseName={courseName}
+            courseDepartment={department}
+            hours={hours}
+          />
+        );
+        // <Button>{"בקש שיעור"}</Button>;
+      },
+    },
+  ];
   return (
     <>
       {isLoading && <LoadingAlert loadingMessage=" טוען " />}
       {isError && <ErrorAlert errorMessage={error.message} />}
-      <h1>
-        {courseName}-{hours}-{tutors && JSON.stringify(tutors)}
-      </h1>
+      {tutors && <DataTable columns={columns} data={tutors} />}
     </>
   );
 }

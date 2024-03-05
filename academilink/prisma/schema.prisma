@@ -114,11 +114,12 @@ model StudentSessionRequest {
   courseDepartment                  String
 
   studentSemesterCourse             StudentSemesterCourse @relation(fields: [semesterStartingDate, studentId, courseName, courseDepartment], references: [semesterStartingDate, studentId, courseName, courseDepartment])
-      
+  
+
   hours                             Int
 
   tutorId                           String
-  chosenTutor                       Tutor @relation(fields: [tutorId], references: [id]) // the tutor that the student chose after communicating
+  tutorCourse                       TutorCourse @relation(fields: [courseName, courseDepartment, tutorId], references: [courseName, courseDepartment, tutorId])
 
   date                              DateTime @default(now())
   
@@ -155,7 +156,7 @@ model Tutor {
   user                                User  @relation(fields: [userId], references: [id])
   courses                             TutorCourse[]
   requests                            TutorCourseRequest[]
-  studentSessionRequests              StudentSessionRequest[]
+  
   preferredTeachingMethod             PreferredTeachingMethod @default(BOTH)
   availabilityFlags                   Int @default(0) // 1 for Sunday, 2 for Monday, 4 for Tuesday, 8 for Wednesday, 16 for Thursday, 32 for Friday, 64 for Saturday
 }
@@ -175,6 +176,7 @@ model TutorCourse {
   @@id([tutorId, courseName, courseDepartment])
 
   courseActive                      Boolean @default(true)
+  studentSessionRequests            StudentSessionRequest[]
 }
 
 model TutorCourseRequest {

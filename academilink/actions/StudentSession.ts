@@ -21,8 +21,7 @@ export const getAllAvailableTutorsForCourse = async (
       throw new Error("Course name or department is missing");
     }
     try {
-      console.log("courseDepartment", courseDepartment);
-      const deb = await prisma.tutor.findMany({
+      return await prisma.tutor.findMany({
         where: {
           courses: {
             some: {
@@ -37,20 +36,108 @@ export const getAllAvailableTutorsForCourse = async (
         select: {
           preferredTeachingMethod: true,
           availabilityFlags: true,
-          user: { select: { name: true } },
-          courses: {
-            where: {
-              courseName: courseName,
-              courseDepartment: courseDepartment,
-              courseActive: true,
+          user: { select: { name: true, email: true } },
+          id: true,
+        },
+      });
+    } catch (error: any) {
+      throw new Error("Can't find tutors for the specified course");
+    }
+  } catch (error: any) {
+    throw new Error(`Operation failed: ${error.message}`);
+  }
+};
+
+export const sendTutorSessionRequest = async (
+  tutorId: string,
+  courseName: string,
+  courseDepartment: string,
+  hours: number
+) => {
+  try {
+    const session = await auth();
+    if (!session || !session.user.id) {
+      throw new Error("User not found");
+    }
+    if (session.user.role === "MANAGER") {
+      throw new Error("You don't have student permissions");
+    }
+    if (
+      !tutorId ||
+      !courseName ||
+      !courseDepartment ||
+      !hours ||
+      !Number.isInteger(hours) ||
+      hours < 1
+    ) {
+      throw new Error("Invalid request parameters");
+    }
+    let studentHoursLeft;
+    let studentInfo;
+    try {
+      // check if the student has enough hours to request a session
+      const studentHours = await prisma.student.findUniqueOrThrow({
+        where: {
+          userId: session.user.id,
+        },
+        select: {
+          id: true,
+          department: true,
+          semesters: {
+            orderBy: {
+              startingDate: "desc",
+            },
+            take: 1,
+            select: {
+              totalHours: true,
+              startingDate: true,
+              courses: {
+                select: {
+                  sessionRequests: {
+                    select: {
+                      hours: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
       });
-      console.log("x", deb, courseName);
-      return deb;
+      let totalUsedHours = 0;
+      studentHours.semesters[0].courses.forEach((course) => {
+        course.sessionRequests.forEach((request) => {
+          totalUsedHours += request.hours;
+        });
+      });
+      studentHoursLeft = studentHours.semesters[0].totalHours - totalUsedHours;
+      studentInfo = {
+        id: studentHours.id,
+        department: studentHours.department,
+        semesterStartingDate: studentHours.semesters[0].startingDate,
+      };
     } catch (error: any) {
-      throw new Error("Can't find tutors for the specified course");
+      throw new Error("Can't find student hours");
+    }
+    if (studentHoursLeft - hours < 0) {
+      throw new Error("You don't have enough hours to request this session");
+    }
+    try {
+      await prisma.studentSessionRequest.create({
+        data: {
+          hours: hours,
+          courseName: courseName,
+          courseDepartment: courseDepartment,
+          studentId: studentInfo.id,
+          semesterStartingDate: studentInfo.semesterStartingDate,
+          tutorId: tutorId,
+        },
+      });
+      return {
+        sucess: "Session request sent successfully",
+      };
+    } catch (error: any) {
+      throw new Error("Can't send session request");
     }
   } catch (error: any) {
     throw new Error(`Operation failed: ${error.message}`);
