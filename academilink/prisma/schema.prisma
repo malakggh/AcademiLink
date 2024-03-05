@@ -87,7 +87,7 @@ model StudentSemester {
   @@id([startingDate, studentId])
 
   courses           StudentSemesterCourse[]
-  sessionRequests   StudentSessionRequest[]
+  
   totalHours        Int @default(12)
 }
 
@@ -100,6 +100,8 @@ model StudentSemesterCourse {
   courseDepartment     String
   course               AllCoursesInSCE @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
   @@id([semesterStartingDate, studentId, courseName, courseDepartment])
+  
+  sessionRequests   StudentSessionRequest[]
 }
 
 
@@ -108,18 +110,17 @@ model StudentSessionRequest {
   
   studentId                         String
   semesterStartingDate              DateTime
-  studentSemester                   StudentSemester @relation(fields: [semesterStartingDate, studentId], references: [startingDate, studentId])
-
   courseName                        String
   courseDepartment                  String
-  course                            AllCoursesInSCE @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
-  
-  progress                          StudentSessionRequestProgress[]      
 
-  tutorId                           String?
-  chosenTutor                       Tutor? @relation(fields: [tutorId], references: [id]) // the tutor that the student chose after communicating
-
+  studentSemesterCourse             StudentSemesterCourse @relation(fields: [semesterStartingDate, studentId, courseName, courseDepartment], references: [semesterStartingDate, studentId, courseName, courseDepartment])
+      
   hours                             Int
+
+  tutorId                           String
+  chosenTutor                       Tutor @relation(fields: [tutorId], references: [id]) // the tutor that the student chose after communicating
+
+  date                              DateTime @default(now())
   
   status                            StudentSessionRequestStatus @default(PENDING)
 }
@@ -127,27 +128,8 @@ model StudentSessionRequest {
 enum StudentSessionRequestStatus {
   PENDING     // by default
   COMPLETED   // when the chosen tutor confirms that the reinforcement session is completed
-  CANCELED     // when the student cancels the request
+  CANCELED    // if the chosen tutor cancels the request
 }
-
-model StudentSessionRequestProgress {
-  requestId                           String
-  request                             StudentSessionRequest  @relation(fields: [requestId], references: [id])
-
-  tutorId                             String
-  tutor                               Tutor  @relation(fields: [tutorId], references: [id])
-
-  @@id([requestId, tutorId])
-
-  tutorResponse                       TutorResponse @default(PENDING)
-}
-
-enum TutorResponse {
-  PENDING     // by default
-  ACCEPTED    // when the tutor accepts the request and they start communicating
-  REJECTED    // when the tutor rejects the request
-}
-
 
 model Manager {
   id        String   @id @default(cuid())
@@ -165,7 +147,6 @@ model AllCoursesInSCE{
   tutorCourses              TutorCourse[]
   tutorCourseRequests       TutorCourseRequest[]
   studentSemesterCourses    StudentSemesterCourse[]
-  studentSessionRequests    StudentSessionRequest[]
 }
 
 model Tutor {
@@ -174,7 +155,6 @@ model Tutor {
   user                                User  @relation(fields: [userId], references: [id])
   courses                             TutorCourse[]
   requests                            TutorCourseRequest[]
-  potentialStudentSessionRequests     StudentSessionRequestProgress[]
   studentSessionRequests              StudentSessionRequest[]
   preferredTeachingMethod             PreferredTeachingMethod @default(BOTH)
   availabilityFlags                   Int @default(0) // 1 for Sunday, 2 for Monday, 4 for Tuesday, 8 for Wednesday, 16 for Thursday, 32 for Friday, 64 for Saturday
