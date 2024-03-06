@@ -2,6 +2,8 @@ import { sendTutorSessionRequest } from "@/actions/StudentSession";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "../ui/use-toast";
 import { Button } from "../ui/button";
+import { useState } from "react";
+import StudentSendSessionRequestDialog from "./StudentSendSessionRequestDialog";
 
 export const StudentSendSessionRequestButton = ({
   tutorId,
@@ -17,6 +19,7 @@ export const StudentSendSessionRequestButton = ({
   const { toast } = useToast();
   const { mutate } = useMutation({
     mutationFn: async () => {
+      console.log("senddd");
       return await sendTutorSessionRequest(
         tutorId,
         courseName,
@@ -42,12 +45,15 @@ export const StudentSendSessionRequestButton = ({
     },
   });
   return (
-    <Button
-      onClick={() => {
-        mutate();
-      }}
-    >
-      {"שלח בקשה למתרגל"}
-    </Button>
+    <>
+      <StudentSendSessionRequestDialog mutate={mutate} />
+      {/* <Button
+        onClick={() => {
+          mutate();
+        }}
+      >
+        {"שלח בקשה למתרגל"}
+      </Button> */}
+    </>
   );
 };
