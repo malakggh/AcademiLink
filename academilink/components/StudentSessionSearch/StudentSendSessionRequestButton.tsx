@@ -19,7 +19,6 @@ export const StudentSendSessionRequestButton = ({
   const { toast } = useToast();
   const { mutate } = useMutation({
     mutationFn: async () => {
-      console.log("senddd");
       return await sendTutorSessionRequest(
         tutorId,
         courseName,

@@ -97,6 +97,11 @@ export const sendTutorSessionRequest = async (
                     select: {
                       hours: true,
                     },
+                    where: {
+                      NOT: {
+                        status: "CANCELED",
+                      },
+                    },
                   },
                 },
               },
