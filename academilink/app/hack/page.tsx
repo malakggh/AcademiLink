@@ -1,64 +1,50 @@
-'use client'
+"use client";
+import {
+  generateFakeStudents,
+  addAllCourses,
+  testx,
+  generateFakeTutors,
+} from "@/actions/hack";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/utils/connect";
-
-const courses = [
-  {
-    courseName: "אלגברה לינארית לתוכנה",
-    courseDepartment: "הנדסת תוכנה",
-    courseSemester: 1,
-  },
-  {
-    courseName: "חדוא 1",
-    courseDepartment: "מדעי מחשב",
-    courseSemester: 1,
-  },
-  {
-    courseName: "חדוא 1 להנדסת תוכנה",
-    courseDepartment: "הנדסת תוכנה",
-    courseSemester: 1,
-  },
-  {
-    courseName: "חדוא 2 להנדסת תוכנה",
-    courseDepartment: "הנדסת תוכנה",
-    courseSemester: 2,
-  },
-  {
-    courseName: "לוגיקה ונושאים דיסקרטיים I ",
-    courseDepartment: "הנדסת תוכנה",
-    courseSemester: 1,
-  },
-  {
-    courseName: "מבוא למדעי המחשב",
-    courseDepartment: "הנדסת תוכנה",
-    courseSemester: 1,
-  },
-  {
-    courseName: "מבוא למדעי המחשב",
-    courseDepartment: "מדעי מחשב",
-    courseSemester: 1,
-  },
-];
 
 const page = () => {
-
   return (
     <div>
-      <Button size="lg" onClick={
-        async () => {
-          try {
-            await prisma.allCoursesInSCE.createMany({
-              data: courses,
-            });
-          } catch (error: any) {
-            throw new Error(`Operation failed: ${error.message}`);
-          }
-        }
-      }>
+      <Button
+        size="lg"
+        onClick={async () => {
+          await addAllCourses();
+          alert("Courses created successfully");
+        }}
+      >
         Create Courses
       </Button>
-      
-      
+      <Button
+        size="lg"
+        onClick={async () => {
+          await testx();
+        }}
+      >
+        test
+      </Button>
+      <Button
+        size="lg"
+        onClick={async () => {
+          await generateFakeStudents(500);
+          alert("Students created successfully");
+        }}
+      >
+        500 Fake Students
+      </Button>
+      <Button
+        size="lg"
+        onClick={async () => {
+          await generateFakeTutors(500);
+          alert("Tutors created successfully");
+        }}
+      >
+        500 Fake Tutor
+      </Button>
     </div>
   );
 };

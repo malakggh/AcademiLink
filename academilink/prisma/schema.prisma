@@ -171,7 +171,7 @@ model TutorCourse {
   tutorId                           String
   courseName                        String
   courseDepartment                  String
-  tutor      Tutor                  @relation(fields: [tutorId], references: [id])
+  tutor      Tutor                  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   course     AllCoursesInSCE        @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
   @@id([tutorId, courseName, courseDepartment])
 
@@ -184,7 +184,7 @@ model TutorCourseRequest {
   tutorId                           String
   courseName                        String
   courseDepartment                  String
-  tutor      Tutor                  @relation(fields: [tutorId], references: [id])
+  tutor      Tutor                  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   course     AllCoursesInSCE        @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
 
   courseGrade                       Float
