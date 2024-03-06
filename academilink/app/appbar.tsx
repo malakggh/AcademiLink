@@ -1,24 +1,30 @@
+import { ModeToggle } from "@/components/ModeToggle";
+import { Button } from "@/components/ui/button";
 import { auth, signIn, signOut } from "auth";
 import Link from "next/link";
 import React from "react";
 
 async function AppBar() {
   const session = await auth();
-  const temp = JSON.stringify(session?.user);
   return (
-    <div className="p-2 bg-gradient-to-b from-slate-800 to-slate-600 flex gap-2 ">
-      <div className="ml-auto">
+    <div className="py-4 border-b pb-2 mb-4">
+      <>
         {session && session.user ? (
-          <div className="flex gap-2">
-            <p>{session.user.name}</p>
-            <form
-              action={async () => {
-                "use server";
-                await signOut();
-              }}
-            >
-              <button type="submit">Sign Out</button>
-            </form>
+          <div className="flex flex-row justify-between mx-4">
+            <h2 className="scroll-m-20  text-2xl font-semibold tracking-tight first:mt-0">
+              {session.user.name}
+            </h2>
+            <div className="flex gap-2">
+              <form
+                action={async () => {
+                  "use server";
+                  await signOut();
+                }}
+              >
+                <Button type="submit">{"להתנתק"}</Button>
+              </form>
+              <ModeToggle />
+            </div>
           </div>
         ) : (
           <form
@@ -27,10 +33,10 @@ async function AppBar() {
               await signIn();
             }}
           >
-            <button type="submit">Sign In</button>
+            <Button type="submit">{"להתחבר"}</Button>
           </form>
         )}
-      </div>
+      </>
     </div>
   );
 }

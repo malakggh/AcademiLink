@@ -5,6 +5,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import AppBar from "./appbar";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,9 +24,16 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <QueryProvider>
-            <AppBar />
-            {children}
-            <Toaster />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <AppBar />
+              {children}
+              <Toaster />
+            </ThemeProvider>
           </QueryProvider>
         </AuthProvider>
       </body>
