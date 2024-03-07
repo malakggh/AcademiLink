@@ -1,4 +1,5 @@
 import { ModeToggle } from "@/components/ModeToggle";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { auth, signIn, signOut } from "auth";
 import Link from "next/link";
@@ -12,6 +13,7 @@ async function AppBar() {
         {session && session.user ? (
           <div className="flex flex-row justify-between mx-4">
             <h2 className="scroll-m-20  text-2xl font-semibold tracking-tight first:mt-0">
+              <Badge className="ml-2">{session.user.role}</Badge>
               {session.user.name}
             </h2>
             <div className="flex gap-2">
@@ -27,14 +29,17 @@ async function AppBar() {
             </div>
           </div>
         ) : (
-          <form
-            action={async () => {
-              "use server";
-              await signIn();
-            }}
-          >
-            <Button type="submit">{"להתחבר"}</Button>
-          </form>
+          <div className="flex flex-row justify-between mx-4">
+            <form
+              action={async () => {
+                "use server";
+                await signIn();
+              }}
+            >
+              <Button type="submit">{"להתחבר"}</Button>
+            </form>
+            <ModeToggle />
+          </div>
         )}
       </>
     </div>
