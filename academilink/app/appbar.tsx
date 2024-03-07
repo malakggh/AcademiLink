@@ -23,7 +23,7 @@ async function AppBar() {
       { href: "/student/session/search", label: "בקש תיגבור" },
     ],
     TUTOR: [
-      { href: "/tutor/home", label: "העדפות שלי" },
+      { href: "/tutor/preferences", label: "העדפות שלי" },
       { href: "/tutor/courses", label: "קורסים" },
     ],
     MANAGER: [{ href: "/manager/courses/requests", label: "בקשות מתגברים" }],
