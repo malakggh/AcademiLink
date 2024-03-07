@@ -14,39 +14,31 @@ export const getTutorCourseRequestSchema = ({
   const formSchema = z
     .object({
       courseDepartment: z.enum(allDepartments as [string, ...string[]]),
-      courseSemester: z.coerce.number().min(1).max(8),
-      courseName: z.enum(
-        allCourses.map((course) => course.courseName) as [string, ...string[]]
-      ),
+      courseName: z.string(),
       courseGrade: z.coerce.number().min(70).max(100),
       message: z.string().optional(),
     })
     .refine(
       (data) => {
-        // check if the courseSemester is in the selected courseDepartment
         return allCourses.some(
-          (course) =>
-            course.courseDepartment === data.courseDepartment &&
-            course.courseSemester == data.courseSemester
+          (course) => course.courseDepartment === data.courseDepartment
         );
       },
       {
-        message: "Course semester is not in the selected department",
-        path: ["courseSemester"],
+        message: "המחלקה שנבחרה לא קיימת",
+        path: ["courseDepartment"],
       }
     )
     .refine(
       (data) => {
-        // check if the courseName is in the selected courseDepartment and courseSemester
         return allCourses.some(
           (course) =>
             course.courseDepartment === data.courseDepartment &&
-            course.courseSemester == data.courseSemester &&
             course.courseName === data.courseName
         );
       },
       {
-        message: "Course name is not in the selected department and semester",
+        message: "הקורס שנבחר לא קיים במחלקה שנבחרה",
         path: ["courseName"],
       }
     );
@@ -56,7 +48,6 @@ export const getTutorCourseRequestSchema = ({
 export const getTutorCourseRequestSchema_ = () => {
   const formSchema = z.object({
     courseDepartment: z.string(),
-    courseSemester: z.coerce.number().min(1).max(8),
     courseName: z.string(),
     courseGrade: z.coerce.number().min(70).max(100),
     message: z.string().optional(),

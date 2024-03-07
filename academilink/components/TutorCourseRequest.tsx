@@ -21,13 +21,25 @@ import {
   SelectItem,
   Select,
 } from "@/components/ui/select";
-import { AllCoursesInSCE } from "@prisma/client";
+import type { AllCoursesInSCE } from "@prisma/client";
 import { requestNewCourse } from "@/actions/TutorCourseRequests";
 import { getTutorCourseRequestSchema } from "@/lib/schema";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import {
+  CaretSortIcon,
+  CheckIcon,
+  ExclamationTriangleIcon,
+} from "@radix-ui/react-icons";
 import { useState } from "react";
 import { ErrorAlert } from "@/components/ui/other/CustomAlert";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "./ui/command";
 export default function FormRequestExample({
   allCourses,
 }: {
@@ -44,7 +56,6 @@ export default function FormRequestExample({
     resolver: zodResolver(formSchema),
     defaultValues: {
       courseDepartment: "",
-      courseSemester: 0,
       courseName: "",
       courseGrade: 0,
       message: "",
@@ -52,17 +63,10 @@ export default function FormRequestExample({
   });
 
   const selectedCourseDepartment = form.watch("courseDepartment");
-  const selectedCourseSemester = form.watch("courseSemester");
 
-  function getAllSemesters() {
-    const semesters =
-      allCourses
-        ?.filter(
-          (course) => course.courseDepartment === selectedCourseDepartment
-        )
-        .map((course) => course.courseSemester) || [];
-    return Array.from(new Set(semesters));
-  }
+  const allCoursesInSelectedDepartment = allCourses.filter(
+    (course) => course.courseDepartment === selectedCourseDepartment
+  );
 
   const [errorMessages, setErrorMessages] = useState("");
   const [shouldReset, setShouldReset] = useState(0);
@@ -85,92 +89,100 @@ export default function FormRequestExample({
       return;
     }
   };
-  type nameType =
-    | "courseDepartment"
-    | "message"
-    | "courseSemester"
-    | "courseName"
-    | "courseGrade";
-  const selectForms = [
-    {
-      condition: true,
-      name: "courseDepartment" as nameType,
-      label: "מחלקת הקורס",
-      key: shouldReset,
-      placeHolder: "בחר מחלקה",
-      options: allDepartments.map((department) => (
-        <SelectItem key={department} value={department}>
-          {department}
-        </SelectItem>
-      )),
-    },
-    {
-      condition: selectedCourseDepartment,
-      name: "courseSemester" as nameType,
-      label: "שנה וסמסטר של הקורס",
-      key: "courseSemester",
-      placeHolder: "בחר שנה וסמסטר",
-      options: getAllSemesters().map((semester) => (
-        <SelectItem key={semester} value={String(semester)}>
-          {"שנה " +
-            String(Math.ceil(semester / 2)) +
-            ", סמסטר " +
-            String(((semester + 1) % 2) + 1 === 1 ? "א" : "ב")}
-        </SelectItem>
-      )),
-    },
-    {
-      condition: selectedCourseSemester != 0,
-      name: "courseName" as nameType,
-      label: "שם הקורס",
-      key: "courseName",
-      placeHolder: "בחר קורס",
-      options: allCourses
-        .filter(
-          (course) =>
-            course.courseDepartment === selectedCourseDepartment &&
-            course.courseSemester == selectedCourseSemester
-        )
-        .map((course) => (
-          <SelectItem key={course.courseName} value={course.courseName}>
-            {course.courseName}
-          </SelectItem>
-        )),
-    },
-  ];
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="w-full flex flex-col gap-4"
       >
-        {selectForms.map(
-          (selectForm) =>
-            selectForm.condition && (
-              <FormField
-                key={selectForm.key}
-                control={form.control}
-                name={selectForm.name}
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>{selectForm.label}</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange}>
-                          <SelectTrigger style={{ direction: "rtl" }}>
-                            <SelectValue placeholder={selectForm.placeHolder} />
-                          </SelectTrigger>
-                          <SelectContent style={{ direction: "rtl" }}>
-                            {selectForm.options}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            )
+        <FormField
+          key={shouldReset}
+          control={form.control}
+          name="courseDepartment"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>{"מחלקת הקורס"}</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange}>
+                    <SelectTrigger style={{ direction: "rtl" }}>
+                      <SelectValue placeholder={"בחר מחלקה"} />
+                    </SelectTrigger>
+                    <SelectContent style={{ direction: "rtl" }}>
+                      {allDepartments.map((department) => (
+                        <SelectItem key={department} value={department}>
+                          {department}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
+
+        {selectedCourseDepartment && (
+          <FormField
+            control={form.control}
+            name="courseName"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>{"שם הקורס"}</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? allCoursesInSelectedDepartment.find(
+                              (course) => course.courseName === field.value
+                            )?.courseName
+                          : "בחר קורס"}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="חיפוש קורס" className="h-9" />
+                      <CommandEmpty>{"קורס לא נמצא"}</CommandEmpty>
+                      <CommandGroup>
+                        {allCoursesInSelectedDepartment.map((course) => (
+                          <CommandItem
+                            value={course.courseName}
+                            key={course.courseName}
+                            onSelect={() => {
+                              form.setValue("courseName", course.courseName);
+                            }}
+                          >
+                            {course.courseName}
+                            <CheckIcon
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                course.courseName === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
 
         <FormField
