@@ -6,6 +6,7 @@ import AppBar from "./appbar";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { StrictMode } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,22 +22,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
-      <body className={inter.className}>
-        <AuthProvider>
-          <QueryProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <AppBar />
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </QueryProvider>
-        </AuthProvider>
-      </body>
+      <StrictMode>
+        <body className={inter.className}>
+          <AuthProvider>
+            <QueryProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <AppBar />
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </QueryProvider>
+          </AuthProvider>
+        </body>
+      </StrictMode>
     </html>
   );
 }

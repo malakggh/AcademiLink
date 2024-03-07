@@ -4,7 +4,7 @@ import { useToast } from "../ui/use-toast";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import StudentSendSessionRequestDialog from "./StudentSendSessionRequestDialog";
-
+import { useRouter } from "next/navigation";
 export const StudentSendSessionRequestButton = ({
   tutorId,
   courseName,
@@ -16,6 +16,7 @@ export const StudentSendSessionRequestButton = ({
   courseDepartment: string;
   hours: number;
 }) => {
+  const router = useRouter();
   const { toast } = useToast();
   const { mutate } = useMutation({
     mutationFn: async () => {
@@ -37,6 +38,7 @@ export const StudentSendSessionRequestButton = ({
       toast({
         title: "Course status has been updated successfully",
       });
+      router.push("/student/session/requests");
     },
     // todo add onMutate for optimistic updates
     onMutate(variables) {
