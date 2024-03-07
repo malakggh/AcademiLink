@@ -19,15 +19,8 @@ export default async function Courses() {
   }
   const allCourses = await getAllCoursesInSCE();
   return (
-    <div>
-      <H3>{"הקורסים שלי"}</H3>
-      <div
-        className="
-          p-4
-          "
-      >
-        <TutorCourses />
-      </div>
+    <>
+      <TutorCourses />
 
       <Collapsible>
         <CollapsibleTrigger>
@@ -44,10 +37,9 @@ export default async function Courses() {
           "
           >
             {allCourses && <FormRequestExample allCourses={allCourses} />}
-            {!allCourses && <p>Loading...</p>}
           </div>
         </CollapsibleContent>
       </Collapsible>
-    </div>
+    </>
   );
 }

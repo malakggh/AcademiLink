@@ -9,15 +9,8 @@ import { H3 } from "@/components/ui/Typography";
 const TutorPage = () => {
   return (
     <>
-      <Button asChild>
-        <Link href="/tutor/courses">{"עמוד הקורסים"}</Link>
-      </Button>
-      <H3>{"שיטת הלימוד"}</H3>
-      <div className="p-4">
-        <TutorPreferredTeachingMethod />
-        <H3>{"ימי לימודים"}</H3>
-        <AvailabilityDaysTeaching />
-      </div>
+      <TutorPreferredTeachingMethod />
+      <AvailabilityDaysTeaching />
     </>
   );
 };

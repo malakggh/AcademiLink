@@ -5,6 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorAlert, LoadingAlert } from "./ui/other/CustomAlert";
 import { toast } from "./ui/use-toast";
 import { LoadingSpinner } from "./ui/other/LoadingSpinner";
+import { H3 } from "./ui/Typography";
+import { Label } from "./ui/label";
 
 const daysOfWeek = [
   { id: 1, day: "א" },
@@ -51,13 +53,14 @@ const AvailabilityDaysTeaching = () => {
   });
 
   return (
-    <div>
+    <div className="w-full">
+      <H3>{"ימי לימודים"}</H3>
       {isLoading && <LoadingAlert loadingMessage="טוען" />}
       {isError && <ErrorAlert errorMessage={error.message} />}
       {data && (
-        <>
+        <div className="flex justify-start gap-4 py-4">
           {daysOfWeek.map(({ id, day }) => (
-            <div key={id} className="flex items-center space-x-2">
+            <div key={id} className="flex items-center px-2">
               <Checkbox
                 id={`day-${day}`}
                 checked={id & data.availabilityFlags ? true : false}
@@ -68,16 +71,16 @@ const AvailabilityDaysTeaching = () => {
                 }}
                 disabled={isPending}
               />
-              <label
+              <Label
                 htmlFor={`day-${id}`}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="px-1 text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 {day}
-              </label>
+              </Label>
               {isPending && <LoadingSpinner />}
             </div>
           ))}
-        </>
+        </div>
       )}
     </div>
   );

@@ -142,7 +142,7 @@ export default function FormRequestExample({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="max-w-md w-full flex flex-col gap-4"
+        className="w-full flex flex-col gap-4"
       >
         {selectForms.map(
           (selectForm) =>

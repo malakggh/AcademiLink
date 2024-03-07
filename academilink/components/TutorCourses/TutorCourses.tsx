@@ -14,6 +14,7 @@ import DisplayCourses from "./DisplayCourses";
 import { useState } from "react";
 import { Label } from "../ui/label";
 import { ErrorAlert, LoadingAlert } from "@/components/ui/other/CustomAlert";
+import { H3 } from "../ui/Typography";
 
 export default function TutorCourses() {
   const {
@@ -35,7 +36,8 @@ export default function TutorCourses() {
   const [selectedDepartment, setSelectedDepartment] = useState("all");
 
   return (
-    <div style={{ direction: "rtl" }}>
+    <div className="w-full">
+      <H3>{"הקורסים שלי"}</H3>
       <div className="pb-4 flex">
         <Label className="text-lg px-2 pt-1">{"בחר מחלקה"}</Label>
         <Select

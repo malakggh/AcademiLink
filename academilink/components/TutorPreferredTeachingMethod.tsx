@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
 import { LoadingSpinner } from "./ui/other/LoadingSpinner";
 import { useState } from "react";
+import { H3 } from "./ui/Typography";
 
 const TutorPreferredTeachingMethod = () => {
   const { data, isLoading, isError, error } = useQuery({
@@ -53,12 +54,15 @@ const TutorPreferredTeachingMethod = () => {
   });
 
   return (
-    <div>
+    <div className="w-full">
+      <H3>{"שיטת לימוד"}</H3>
+
       {isLoading && <LoadingAlert loadingMessage=" טוען " />}
       {isError && <ErrorAlert errorMessage={error.message} />}
       {data && (
         <>
           <RadioGroup
+            className="flex justify-start gap-4 py-4"
             key={forceRerender}
             dir="rtl"
             defaultValue={data.preferredTeachingMethod}
@@ -71,7 +75,12 @@ const TutorPreferredTeachingMethod = () => {
               ([optionHe, optionEn]) => (
                 <div className="flex items-center space-x-2" key={optionEn}>
                   <RadioGroupItem value={optionEn} id={optionEn} />
-                  <Label htmlFor={optionEn}>{optionHe}</Label>
+                  <Label
+                    htmlFor={optionEn}
+                    className="px-1 text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {optionHe}
+                  </Label>
                   {isPending && <LoadingSpinner />}
                 </div>
               )
