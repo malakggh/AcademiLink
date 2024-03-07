@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "../ui/table/DataTableColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "../ui/table/data-table";
-import { $Enums } from "@prisma/client";
+import type { $Enums } from "@prisma/client";
 import { decodeAvailability } from "@/lib/functions";
 import { StudentSendSessionRequestButton } from "./StudentSendSessionRequestButton";
 import { P } from "../ui/Typography";
