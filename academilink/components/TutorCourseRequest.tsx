@@ -209,7 +209,7 @@ export default function FormRequestExample({
           className="w-full"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+          {form.formState.isSubmitting ? "שולח בקשה..." : "שלח בקשה"}
         </Button>
         {errorMessages != "" && <ErrorAlert errorMessage={errorMessages} />}
       </form>

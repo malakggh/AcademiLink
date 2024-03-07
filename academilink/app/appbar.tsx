@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/menubar";
 import { auth, signIn, signOut } from "auth";
 import Link from "next/link";
-import React from "react";
 
 async function AppBar() {
   const session = await auth();
@@ -24,7 +23,7 @@ async function AppBar() {
     ],
     TUTOR: [
       { href: "/tutor/preferences", label: "העדפות שלי" },
-      { href: "/tutor/courses", label: "קורסים" },
+      { href: "/tutor/courses", label: "הקורסים שלי" },
     ],
     MANAGER: [{ href: "/manager/courses/requests", label: "בקשות מתגברים" }],
   };

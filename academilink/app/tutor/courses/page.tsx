@@ -2,12 +2,18 @@ import { getAllCoursesInSCE } from "@/actions/Courses";
 import FormRequestExample from "@/components/TutorCourseRequest";
 import TutorCourses from "@/components/TutorCourses/TutorCourses";
 import { H3 } from "@/components/ui/Typography";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
 import { auth } from "@/utils/auth";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default async function Courses() {
   const session = await auth();
@@ -20,26 +26,23 @@ export default async function Courses() {
   const allCourses = await getAllCoursesInSCE();
   return (
     <>
-      <TutorCourses />
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="default">
+            <H3>{"בקשת קורס חדש"}</H3>
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle className="m-auto my-4 border-b-4">
+              {"בקשת קורס חדש"}
+            </SheetTitle>
+          </SheetHeader>
+          {allCourses && <FormRequestExample allCourses={allCourses} />}
+        </SheetContent>
+      </Sheet>
 
-      <Collapsible>
-        <CollapsibleTrigger>
-          <H3>{"בקשת קורס חדש"}</H3>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div
-            className="
-          flex 
-          min-h-screen 
-          flex-col 
-          justify-between
-          p-4
-          "
-          >
-            {allCourses && <FormRequestExample allCourses={allCourses} />}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+      <TutorCourses />
     </>
   );
 }
