@@ -8,6 +8,9 @@ import { DataTable } from "../ui/table/data-table";
 import { $Enums } from "@prisma/client";
 import { decodeAvailability } from "@/lib/functions";
 import { StudentSendSessionRequestButton } from "./StudentSendSessionRequestButton";
+import { P } from "../ui/Typography";
+import { Badge } from "../ui/badge";
+import { PreferredTeachingMethodsReverse } from "@/lib/enums";
 export default function StudentSessionTable({
   selectedData: { courseName, hours },
   department,
@@ -58,7 +61,7 @@ export default function StudentSessionTable({
       ),
       cell: ({ row }) => {
         const preferredTeachingMethod = row.original.preferredTeachingMethod;
-        return <>{preferredTeachingMethod}</>;
+        return <>{PreferredTeachingMethodsReverse[preferredTeachingMethod]}</>;
       },
     },
     {
@@ -91,7 +94,17 @@ export default function StudentSessionTable({
   ];
   return (
     <>
-      {isLoading && <LoadingAlert loadingMessage=" טוען " />}
+      <div className="flex justify-center gap-4">
+        <Badge>
+          {"שעות: "}
+          {hours}
+        </Badge>
+        <p>
+          {"מתרגלים זמינים לקורס "}
+          <Badge>{courseName}</Badge>
+        </p>
+      </div>
+      {isLoading && <LoadingAlert loadingMessage="טוען מתרגלים זמינים" />}
       {isError && <ErrorAlert errorMessage={error.message} />}
       {tutors && <DataTable columns={columns} data={tutors} />}
     </>

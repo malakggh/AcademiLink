@@ -4,12 +4,14 @@ import StudentSessionForm from "@/components/StudentSessionSearch/StudentSession
 const SessionSearch = async () => {
   const { courses, department, totalHours } = await getStudentCourses();
   return (
-    <div>
-      <StudentSessionForm
-        studentCourses={courses}
-        totalHours={totalHours}
-        department={department}
-      />
+    <div className="w-4/5 mx-auto min-h-screen">
+      <div className="flex flex-col items-center">
+        <StudentSessionForm
+          studentCourses={courses}
+          totalHours={totalHours}
+          department={department}
+        />
+      </div>
     </div>
   );
 };

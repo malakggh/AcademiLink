@@ -3,3 +3,9 @@ export enum PreferredTeachingMethods {
   פרונטלי = "FRONTAL",
   שניהם = "BOTH",
 }
+
+export enum PreferredTeachingMethodsReverse {
+  ZOOM = "זום",
+  FRONTAL = "פרונטלי",
+  BOTH = "זום / פרונטלי",
+}

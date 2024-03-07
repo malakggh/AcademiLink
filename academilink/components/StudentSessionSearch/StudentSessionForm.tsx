@@ -73,63 +73,64 @@ export default function StudentSessionForm({
 
   return (
     <>
-      <Form {...form}>
-        <form
-          className="max-w-md w-full flex flex-col gap-4"
-          onSubmit={form.handleSubmit(handleSubmit)}
-        >
-          <FormField
-            control={form.control}
-            name={"courseName"}
-            render={({ field }) => {
-              return (
-                <FormItem>
-                  <FormLabel>{"בחר קורס"}</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange}>
-                      <SelectTrigger style={{ direction: "rtl" }}>
-                        <SelectValue placeholder="בחר קורס" />
-                      </SelectTrigger>
-                      <SelectContent style={{ direction: "rtl" }}>
-                        {studentCourses.map((course) => (
-                          <SelectItem key={course} value={course}>
-                            {course}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-          <FormField
-            control={form.control}
-            name={"hours"}
-            render={({ field }) => {
-              return (
-                <FormItem>
-                  <FormLabel>{"שעות"}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="שעות" type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={form.formState.isSubmitting}
+      {!selectedData ? (
+        <Form {...form}>
+          <form
+            className="max-w-md w-full flex flex-col gap-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
           >
-            {form.formState.isSubmitting ? "מחפש..." : "חפש מתגברים"}
-          </Button>
-        </form>
-      </Form>
-      {selectedData && (
+            <FormField
+              control={form.control}
+              name={"courseName"}
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>{"בחר קורס"}</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange}>
+                        <SelectTrigger style={{ direction: "rtl" }}>
+                          <SelectValue placeholder="בחר קורס" />
+                        </SelectTrigger>
+                        <SelectContent style={{ direction: "rtl" }}>
+                          {studentCourses.map((course) => (
+                            <SelectItem key={course} value={course}>
+                              {course}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+            <FormField
+              control={form.control}
+              name={"hours"}
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>{"שעות"}</FormLabel>
+                    <FormControl>
+                      <Input placeholder="שעות" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? "מחפש..." : "חפש מתגברים"}
+            </Button>
+          </form>
+        </Form>
+      ) : (
         <StudentSessionTable
           selectedData={selectedData}
           department={department}
