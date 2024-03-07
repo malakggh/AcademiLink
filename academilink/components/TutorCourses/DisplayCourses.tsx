@@ -74,18 +74,19 @@ const DisplayCourses = ({
     },
   });
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+    <div className="flex flex-wrap justify-center gap-4">
       {courses &&
         courses.map((course) => (
           <Card
             key={course.tutorId}
             style={{ width: "300px", direction: "rtl" }}
+            className="flex flex-col justify-between"
           >
             <CardHeader>
-              <CardTitle>{course.courseName}</CardTitle>
               <CardDescription>
-                <Badge variant="outline">{course.courseDepartment}</Badge>
+                <Badge variant="secondary">{course.courseDepartment}</Badge>
               </CardDescription>
+              <CardTitle>{course.courseName}</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className=" flex items-center space-x-4 rounded-md border p-4">
