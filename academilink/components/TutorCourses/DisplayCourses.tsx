@@ -13,6 +13,7 @@ import { changeTutorCourseStatus } from "@/actions/TutorCourses";
 import { useToast } from "../ui/use-toast";
 import { useState } from "react";
 import { LoadingSpinner } from "../ui/other/LoadingSpinner";
+import { P } from "../ui/Typography";
 const DisplayCourses = ({
   courses,
 }: {
@@ -92,9 +93,7 @@ const DisplayCourses = ({
               <div className=" flex items-center space-x-4 rounded-md border p-4">
                 <LightningBoltIcon />
                 <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {"כרגע מלמד"}
-                  </p>
+                  <P>{"כרגע מלמד"}</P>
                 </div>
 
                 {loadingCourses.includes(

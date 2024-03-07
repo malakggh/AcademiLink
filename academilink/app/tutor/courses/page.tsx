@@ -1,6 +1,7 @@
 import { getAllCoursesInSCE } from "@/actions/Courses";
 import FormRequestExample from "@/components/TutorCourseRequest";
 import TutorCourses from "@/components/TutorCourses/TutorCourses";
+import { H3 } from "@/components/ui/Typography";
 import {
   Collapsible,
   CollapsibleContent,
@@ -19,9 +20,7 @@ export default async function Courses() {
   const allCourses = await getAllCoursesInSCE();
   return (
     <div>
-      <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
-        {"הקורסים שלי"}
-      </h2>
+      <H3>{"הקורסים שלי"}</H3>
       <div
         className="
           p-4
@@ -32,9 +31,7 @@ export default async function Courses() {
 
       <Collapsible>
         <CollapsibleTrigger>
-          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            {"בקשת קורס חדש"}
-          </h2>
+          <H3>{"בקשת קורס חדש"}</H3>
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div

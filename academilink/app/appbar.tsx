@@ -1,4 +1,5 @@
 import { ModeToggle } from "@/components/ModeToggle";
+import { H2 } from "@/components/ui/Typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { auth, signIn, signOut } from "auth";
@@ -12,10 +13,10 @@ async function AppBar() {
       <>
         {session && session.user ? (
           <div className="flex flex-row justify-between mx-4">
-            <h2 className="scroll-m-20  text-2xl font-semibold tracking-tight first:mt-0">
+            <H2>
               <Badge className="ml-2">{session.user.role}</Badge>
               {session.user.name}
-            </h2>
+            </H2>
             <div className="flex gap-2">
               <form
                 action={async () => {
