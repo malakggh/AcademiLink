@@ -16,9 +16,21 @@ const Requests = ({
   semester: getAllStudentSessionRequestsType;
 }) => {
   const statusMap = {
-    PENDING: <Badge variant="outline">{"ממתין לאישור"}</Badge>,
-    COMPLETED: <Badge variant="default">{"התגבור התקיים"}</Badge>,
-    CANCELED: <Badge variant="destructive">{"התגבור בוטל"}</Badge>,
+    PENDING: (
+      <Badge className="text-base" variant="outline">
+        {"עדיין לא התקיים"}
+      </Badge>
+    ),
+    COMPLETED: (
+      <Badge className="text-base" variant="default">
+        {"התגבור התקיים"}
+      </Badge>
+    ),
+    CANCELED: (
+      <Badge className="text-base" variant="destructive">
+        {"התגבור בוטל"}
+      </Badge>
+    ),
   };
   return (
     <div className="w-full">
@@ -33,9 +45,11 @@ const Requests = ({
                   className="flex flex-col justify-between px-4"
                 >
                   <CardHeader>
-                    <CardTitle>{"תגבור בקורס "}</CardTitle>
-                    <CardDescription className="flex justify-between">
-                      <Badge>{course.courseName}</Badge>
+                    <CardTitle className="m-auto">
+                      <Badge className="text-lg">{course.courseName}</Badge>
+                    </CardTitle>
+                    <CardDescription className="m-auto">
+                      {/* <Badge>{course.courseName}</Badge> */}
                       <Badge variant="secondary">
                         {request.hours}
                         {" שעות "}
@@ -58,11 +72,7 @@ const Requests = ({
                       <CalendarIcon className="h-5 w-5 ml-4" />
                       <p>{request.date.toLocaleDateString("he-IL")}</p>
                     </div>
-
-                    <div className="flex justify-between">
-                      <p>{"סטטוס"}</p>
-                      {statusMap[request.status]}
-                    </div>
+                    <div>{statusMap[request.status]}</div>
                   </CardContent>
                 </Card>
               ))}
