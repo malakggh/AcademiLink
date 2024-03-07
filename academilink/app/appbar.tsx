@@ -59,7 +59,9 @@ async function AppBar() {
               <form
                 action={async () => {
                   "use server";
-                  await signOut();
+                  await signOut({
+                    redirectTo: "/",
+                  });
                 }}
               >
                 <Button type="submit">{"להתנתק"}</Button>
