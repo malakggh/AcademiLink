@@ -124,6 +124,7 @@ model StudentSessionRequest {
   date                              DateTime @default(now())
   
   status                            StudentSessionRequestStatus @default(PENDING)
+  completionDate                    DateTime?
 }
 
 enum StudentSessionRequestStatus {

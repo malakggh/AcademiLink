@@ -222,3 +222,64 @@ type ResolvedReturnType<T> = T extends (...args: any[]) => Promise<infer R>
 export type getAllStudentSessionRequestsType = ResolvedReturnType<
   typeof getAllStudentSessionRequests
 >;
+
+const getAllSessionsForTutor = async () => {
+  try {
+    const session = await auth();
+    if (!session || !session.user.id) {
+      throw new Error("User not found");
+    }
+    if (session.user.role !== "TUTOR") {
+      throw new Error("You don't have tutor permissions");
+    }
+    let requests;
+    try {
+      requests = await prisma.tutor.findUniqueOrThrow({
+        where: {
+          userId: session.user.id,
+        },
+        select: {
+          courses: {
+            select: {
+              studentSessionRequests: {
+                select: {
+                  id: true,
+                  hours: true,
+                  courseName: true,
+                  courseDepartment: true,
+                  date: true,
+                  completionDate: true,
+                  semesterStartingDate: true,
+                  status: true,
+                  studentSemesterCourse: {
+                    select: {
+                      studentSemester: {
+                        select: {
+                          student: {
+                            select: {
+                              user: {
+                                select: {
+                                  name: true,
+                                  email: true,
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } catch (error: any) {
+      throw new Error("Can't find tutor session requests");
+    }
+    return requests.courses;
+  } catch (error: any) {
+    throw new Error(`Operation failed: ${error.message}`);
+  }
+};
