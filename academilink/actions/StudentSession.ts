@@ -223,7 +223,11 @@ export type getAllStudentSessionRequestsType = ResolvedReturnType<
   typeof getAllStudentSessionRequests
 >;
 
-const getAllSessionsForTutor = async () => {
+export type getAllSessionsForTutorType = ResolvedReturnType<
+  typeof getAllSessionsForTutor
+>;
+
+export const getAllSessionsForTutor = async () => {
   try {
     const session = await auth();
     if (!session || !session.user.id) {
