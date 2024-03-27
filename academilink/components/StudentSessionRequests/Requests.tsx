@@ -1,37 +1,11 @@
 import type { getAllStudentSessionRequestsType } from "@/actions/StudentSession";
-import { Badge } from "../ui/badge";
-import { PersonIcon, CalendarIcon } from "@radix-ui/react-icons";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { P } from "../ui/Typography";
-import Copy from "./Copy";
+
+import StudentSessionRequestCard from "./StudentSessionRequestCard";
 const Requests = ({
   semester,
 }: {
   semester: getAllStudentSessionRequestsType;
 }) => {
-  const statusMap = {
-    PENDING: (
-      <Badge className="text-base" variant="outline">
-        {"עדיין לא התקיים"}
-      </Badge>
-    ),
-    COMPLETED: (
-      <Badge className="text-base" variant="default">
-        {"התגבור התקיים"}
-      </Badge>
-    ),
-    CANCELED: (
-      <Badge className="text-base" variant="destructive">
-        {"התגבור בוטל"}
-      </Badge>
-    ),
-  };
   return (
     <div className="w-full">
       {semester.courses.map((course) => (
@@ -39,42 +13,11 @@ const Requests = ({
           {course.sessionRequests.length > 0 && (
             <div className="flex flex-wrap justify-start gap-4 pb-4">
               {course.sessionRequests.map((request) => (
-                <Card
+                <StudentSessionRequestCard
                   key={request.date.toString()}
-                  style={{ minWidth: "300px", direction: "rtl" }}
-                  className="flex flex-col justify-between px-4"
-                >
-                  <CardHeader>
-                    <CardTitle className="m-auto">
-                      <Badge className="text-lg">{course.courseName}</Badge>
-                    </CardTitle>
-                    <CardDescription className="m-auto">
-                      {/* <Badge>{course.courseName}</Badge> */}
-                      <Badge variant="secondary">
-                        {request.hours}
-                        {" שעות "}
-                      </Badge>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="grid gap-4">
-                    <div className="flex justify-items-stretch">
-                      <PersonIcon className="h-5 w-5 ml-4" />
-                      <p>{request.tutorCourse.tutor.user.name}</p>
-                    </div>
-                    <div className="flex justify-items-stretch">
-                      <Copy text={request.tutorCourse.tutor.user.email} />
-                      <p className="text-wrap">
-                        {request.tutorCourse.tutor.user.email}
-                      </p>
-                    </div>
-
-                    <div className="flex justify-items-stretch">
-                      <CalendarIcon className="h-5 w-5 ml-4" />
-                      <p>{request.date.toLocaleDateString("he-IL")}</p>
-                    </div>
-                    <div>{statusMap[request.status]}</div>
-                  </CardContent>
-                </Card>
+                  request={request}
+                  courseName={course.courseName}
+                />
               ))}
             </div>
           )}

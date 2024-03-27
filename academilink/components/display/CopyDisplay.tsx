@@ -1,8 +1,7 @@
 "use client";
 import { CopyIcon } from "@radix-ui/react-icons";
-import { Button } from "../ui/button";
 
-const Copy = ({ text }: { text: string }) => {
+const CopyDisplay = ({ text }: { text: string }) => {
   return (
     <CopyIcon
       className="h-5 w-5 ml-4 onhover: cursor-pointer"
@@ -13,4 +12,4 @@ const Copy = ({ text }: { text: string }) => {
   );
 };
 
-export default Copy;
+export default CopyDisplay;
