@@ -11,7 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import {
   SelectValue,
   SelectTrigger,
@@ -20,16 +19,23 @@ import {
   Select,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import StudentSessionTable from "./StudentSessionTable";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 export default function StudentSessionForm({
   studentCourses,
-  department,
   totalHours,
+  setSelectedData,
 }: {
   studentCourses: string[];
-  department: string;
   totalHours: number;
+  setSelectedData: Dispatch<
+    SetStateAction<
+      | {
+          courseName: string;
+          hours: number;
+        }
+      | undefined
+    >
+  >;
 }) {
   const formSchema = z
     .object({
@@ -62,80 +68,68 @@ export default function StudentSessionForm({
       hours: 3,
     },
   });
-
-  const [selectedData, setSelectedData] =
-    useState<z.infer<typeof formSchema>>();
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setSelectedData(values);
-    // render StudentSessionTable
-    // return <StudentSessionTable courseName={values.courseName} />;
   };
 
   return (
     <>
-      {!selectedData ? (
-        <Form {...form}>
-          <form
-            className="max-w-md w-full flex flex-col gap-4"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
-            <FormField
-              control={form.control}
-              name={"courseName"}
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel>{"בחר קורס"}</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger style={{ direction: "rtl" }}>
-                          <SelectValue placeholder="בחר קורס" />
-                        </SelectTrigger>
-                        <SelectContent style={{ direction: "rtl" }}>
-                          {studentCourses.map((course) => (
-                            <SelectItem key={course} value={course}>
-                              {course}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
-            <FormField
-              control={form.control}
-              name={"hours"}
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel>{"שעות"}</FormLabel>
-                    <FormControl>
-                      <Input placeholder="שעות" type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
+      <Form {...form}>
+        <form
+          className="max-w-md w-full flex flex-col gap-4"
+          onSubmit={form.handleSubmit(handleSubmit)}
+        >
+          <FormField
+            control={form.control}
+            name={"courseName"}
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>{"בחר קורס"}</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger style={{ direction: "rtl" }}>
+                        <SelectValue placeholder="בחר קורס" />
+                      </SelectTrigger>
+                      <SelectContent style={{ direction: "rtl" }}>
+                        {studentCourses.map((course) => (
+                          <SelectItem key={course} value={course}>
+                            {course}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name={"hours"}
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>{"שעות"}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="שעות" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? "מחפש..." : "חפש מתגברים"}
-            </Button>
-          </form>
-        </Form>
-      ) : (
-        <StudentSessionTable
-          selectedData={selectedData}
-          department={department}
-        />
-      )}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "מחפש..." : "חפש מתגברים"}
+          </Button>
+        </form>
+      </Form>
     </>
   );
 }
