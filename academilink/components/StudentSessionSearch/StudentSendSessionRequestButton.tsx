@@ -3,8 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useToast } from "../ui/use-toast";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import StudentSendSessionRequestDialog from "./StudentSendSessionRequestDialog";
+import DialogComponent from "../DialogComponent";
 import { useRouter } from "next/navigation";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 export const StudentSendSessionRequestButton = ({
   tutorId,
   courseName,
@@ -30,7 +31,7 @@ export const StudentSendSessionRequestButton = ({
     onError: (error: any) => {
       toast({
         variant: "destructive",
-        title: "Error changing course status",
+        title: "Error requesting new session",
         description: error.message,
       });
     },
@@ -47,14 +48,20 @@ export const StudentSendSessionRequestButton = ({
   });
   return (
     <>
-      <StudentSendSessionRequestDialog mutate={mutate} />
-      {/* <Button
-        onClick={() => {
-          mutate();
-        }}
+      <DialogComponent
+        actionButton={<Button onClick={() => mutate()}>{"שלח בקשה"}</Button>}
+        dialogButton={<Button variant="default">{"שלח בקשה למתרגל"}</Button>}
+        title={
+          <div className="flex justify-items-stretch text-xl">
+            <ExclamationTriangleIcon className="h-6 w-6 ml-4" />
+            {"לא ניתן לבטל פעולה זו על ידי סטודנט"}
+          </div>
+        }
       >
-        {"שלח בקשה למתרגל"}
-      </Button> */}
+        {
+          "יש להגיש בקשות רק לאחר תקשורת ישירה עם המתגבר. עם הגשת בקשתך, מספר השעות שצוין יופחת מחשבונך. שעות אלו יוחזרו אליכם רק אם המתגבר יבטל את הבקשה מכל סיבה שהיא. אחרת, השעות המופחתות יועברו למתגבר."
+        }
+      </DialogComponent>
     </>
   );
 };

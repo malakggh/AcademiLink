@@ -1,12 +1,21 @@
+"use client";
 import { getAllSessionsForTutor } from "@/actions/StudentSession";
 import TutorSessions from "@/components/TutorSessions/TutorSessions";
-import { H3 } from "@/components/ui/Typography";
-import { Badge } from "@/components/ui/badge";
-const TutorSessionsPage = async () => {
-  const tutorSessionRequests = await getAllSessionsForTutor();
+import { LoadingAlert } from "@/components/ui/other/CustomAlert";
+import { useQuery } from "@tanstack/react-query";
+const TutorSessionsPage = () => {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["tutorSessions"],
+    queryFn: async () => {
+      return await getAllSessionsForTutor();
+    },
+    refetchOnWindowFocus: false,
+  });
   return (
     <>
-      <TutorSessions sessionRequests={tutorSessionRequests} />
+      {isLoading && <LoadingAlert loadingMessage="טוען נתונים" />}
+      {isError && <LoadingAlert loadingMessage={error.message} />}
+      {data && <TutorSessions sessionRequests={data} />}
     </>
   );
 };
