@@ -1,6 +1,7 @@
 "use server";
 import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/connect";
+import { getTutor } from "./Tutors";
 
 export const getAllAvailableTutorsForCourse = async (
   courseName: string,
@@ -245,12 +246,12 @@ export const getAllSessionsForTutor = async () => {
         select: {
           courses: {
             select: {
+              courseName: true,
+              courseDepartment: true,
               studentSessionRequests: {
                 select: {
                   id: true,
                   hours: true,
-                  courseName: true,
-                  courseDepartment: true,
                   date: true,
                   completionDate: true,
                   semesterStartingDate: true,
@@ -282,7 +283,39 @@ export const getAllSessionsForTutor = async () => {
     } catch (error: any) {
       throw new Error("Can't find tutor session requests");
     }
-    return requests.courses;
+    return requests;
+  } catch (error: any) {
+    throw new Error(`Operation failed: ${error.message}`);
+  }
+};
+
+export const changeSessionStatus = async (
+  requestId: string,
+  status: "COMPLETED" | "CANCELED",
+  completionDate: Date | undefined
+) => {
+  try {
+    if (status === "COMPLETED" && !completionDate) {
+      throw new Error("Missing completion date");
+    }
+    const tutor = await getTutor();
+    try {
+      await prisma.studentSessionRequest.update({
+        where: {
+          tutorId: tutor.id,
+          id: requestId,
+          status: "PENDING",
+        },
+        data: {
+          status: status,
+          ...(status === "COMPLETED" && {
+            completionDate: completionDate,
+          }),
+        },
+      });
+    } catch (e: any) {
+      throw new Error("");
+    }
   } catch (error: any) {
     throw new Error(`Operation failed: ${error.message}`);
   }
