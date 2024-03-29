@@ -1,5 +1,5 @@
 "use client";
-import { type getAllSessionsForTutorType } from "@/actions/StudentSession";
+import { type getAllSessionsForTutorType } from "@/actions/TutorSession";
 import TutorSessionCourse from "./TutorSessionCourse";
 
 const TutorSessions = ({

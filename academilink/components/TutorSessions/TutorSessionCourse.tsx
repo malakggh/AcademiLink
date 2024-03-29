@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "../ui/button";
 import { ChevronDownIcon, ChevronLeftIcon } from "@radix-ui/react-icons";
-import { type getAllSessionsForTutorType } from "@/actions/StudentSession";
+import { type getAllSessionsForTutorType } from "@/actions/TutorSession";
 import { useState } from "react";
 
 export default function TutorSessionCourse({

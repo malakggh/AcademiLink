@@ -2,6 +2,7 @@
 import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/connect";
 import { getTutor } from "./Tutors";
+import { ResolvedReturnType } from "./util";
 
 export const getAllAvailableTutorsForCourse = async (
   courseName: string,
@@ -217,77 +218,9 @@ export const getAllStudentSessionRequests = async () => {
   }
 };
 
-type ResolvedReturnType<T> = T extends (...args: any[]) => Promise<infer R>
-  ? R
-  : any;
 export type getAllStudentSessionRequestsType = ResolvedReturnType<
   typeof getAllStudentSessionRequests
 >;
-
-export type getAllSessionsForTutorType = ResolvedReturnType<
-  typeof getAllSessionsForTutor
->;
-
-export const getAllSessionsForTutor = async () => {
-  try {
-    const session = await auth();
-    if (!session || !session.user.id) {
-      throw new Error("User not found");
-    }
-    if (session.user.role !== "TUTOR") {
-      throw new Error("You don't have tutor permissions");
-    }
-    let requests;
-    try {
-      requests = await prisma.tutor.findUniqueOrThrow({
-        where: {
-          userId: session.user.id,
-        },
-        select: {
-          courses: {
-            select: {
-              courseName: true,
-              courseDepartment: true,
-              studentSessionRequests: {
-                select: {
-                  id: true,
-                  hours: true,
-                  date: true,
-                  completionDate: true,
-                  semesterStartingDate: true,
-                  status: true,
-                  studentSemesterCourse: {
-                    select: {
-                      studentSemester: {
-                        select: {
-                          student: {
-                            select: {
-                              user: {
-                                select: {
-                                  name: true,
-                                  email: true,
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
-    } catch (error: any) {
-      throw new Error("Can't find tutor session requests");
-    }
-    return requests;
-  } catch (error: any) {
-    throw new Error(`Operation failed: ${error.message}`);
-  }
-};
 
 export const changeSessionStatus = async (
   requestId: string,

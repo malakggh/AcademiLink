@@ -1,5 +1,5 @@
 "use client";
-import { getAllSessionsForTutor } from "@/actions/StudentSession";
+import { getAllSessionsForTutor } from "@/actions/TutorSession";
 import TutorSessions from "@/components/TutorSessions/TutorSessions";
 import { LoadingAlert } from "@/components/ui/other/CustomAlert";
 import { useQuery } from "@tanstack/react-query";

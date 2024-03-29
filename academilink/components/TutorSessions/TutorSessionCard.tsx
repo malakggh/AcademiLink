@@ -5,7 +5,7 @@ import HoursDisplay from "../display/HoursDisplay";
 import NameDisplay from "../display/NameDisplay";
 import EmailDisplay from "../display/EmailDisplay";
 import DateDisplay from "../display/DateDisplay";
-import { type getAllSessionsForTutorType } from "@/actions/StudentSession";
+import { type getAllSessionsForTutorType } from "@/actions/TutorSession";
 import TutorSessionButtons from "./TutorSessionButtons";
 export default function TutorSessionCard({
   reqeust,
