@@ -50,7 +50,7 @@ export const StudentSendSessionRequestButton = ({
     <>
       <DialogComponent
         actionButton={<Button onClick={() => mutate()}>{"שלח בקשה"}</Button>}
-        dialogButton={<Button variant="default">{"שלח בקשה למתרגל"}</Button>}
+        dialogButton={<Button variant="default"> {"שלח בקשה למתגבר"}</Button>}
         title={
           <div className="flex justify-items-stretch text-xl">
             <ExclamationTriangleIcon className="h-6 w-6 ml-4" />

@@ -45,7 +45,7 @@ export default function StudentSessionTable({
     {
       accessorKey: "user.name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="שם המתרגל" />
+        <DataTableColumnHeader column={column} title={"שם המתגבר"} />
       ),
     },
     {
