@@ -7,26 +7,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-export default function SelectMonthYear() {
-  const months = {
-    1: "ינואר",
-    2: "פברואר",
-    3: "מרץ",
-    4: "אפריל",
-    5: "מאי",
-    6: "יוני",
-    7: "יולי",
-    8: "אוגוסט",
-    9: "ספטמבר",
-    10: "אוקטובר",
-    11: "נובמבר",
-    12: "דצמבר",
-  };
+import { Dispatch, SetStateAction } from "react";
+export const months: { [key: number]: string } = {
+  1: "ינואר",
+  2: "פברואר",
+  3: "מרץ",
+  4: "אפריל",
+  5: "מאי",
+  6: "יוני",
+  7: "יולי",
+  8: "אוגוסט",
+  9: "ספטמבר",
+  10: "אוקטובר",
+  11: "נובמבר",
+  12: "דצמבר",
+};
+export default function SelectMonthYear({
+  setDate,
+}: {
+  setDate: Dispatch<
+    SetStateAction<{
+      month: string;
+      year: string;
+    }>
+  >;
+}) {
   const years = [2023, 2024];
   return (
-    <div className="flex gap-2 justify-start">
-      <Select>
+    <div className="flex gap-2 justify-start my-4">
+      <Select
+        onValueChange={(value) =>
+          setDate((prev) => ({ ...prev, month: value }))
+        }
+      >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="בחר חודש" />
         </SelectTrigger>
@@ -43,7 +56,9 @@ export default function SelectMonthYear() {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Select>
+      <Select
+        onValueChange={(value) => setDate((prev) => ({ ...prev, year: value }))}
+      >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="בחר שנה" />
         </SelectTrigger>

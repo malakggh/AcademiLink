@@ -25,6 +25,7 @@ async function AppBar() {
       { href: "/tutor/preferences", label: "העדפות שלי" },
       { href: "/tutor/courses", label: "הקורסים שלי" },
       { href: "/tutor/sessions", label: "התגבורים שלי" },
+      { href: "/tutor/report", label: "דוח חודשי שלי" },
     ],
     MANAGER: [{ href: "/manager/courses/requests", label: "בקשות מתגברים" }],
   };
