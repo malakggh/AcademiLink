@@ -24,6 +24,7 @@ declare module "next-auth" {
 }
 
 const config = {
+  trustHost: true, // WARNING: This is insecure and should only be used for development
   adapter: PrismaAdapter(prisma),
   providers: [Google],
   session: {
