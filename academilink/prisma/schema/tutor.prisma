@@ -1,0 +1,26 @@
+model TutorCourse {
+  tutorId                           String
+  courseName                        String
+  courseDepartment                  String
+  tutor      Tutor                  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  course     AllCoursesInSCE        @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
+  @@id([tutorId, courseName, courseDepartment])
+
+  courseActive                      Boolean @default(true)
+  studentSessionRequests            StudentSessionRequest[]
+}
+
+model TutorCourseRequest {
+  id                                String @id @default(cuid())
+  tutorId                           String
+  courseName                        String
+  courseDepartment                  String
+  tutor      Tutor                  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  course     AllCoursesInSCE        @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
+
+  courseGrade                       Float
+  courseRequestMessage              String?
+
+  date                              DateTime @default(now())
+  status                            CourseRequestStatus @default(PENDING)
+}

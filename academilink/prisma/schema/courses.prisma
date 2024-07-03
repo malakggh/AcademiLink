@@ -1,0 +1,10 @@
+model AllCoursesInSCE{
+  courseName                String
+  courseDepartment          String
+  // courseName and courseDepartment are the primary key
+  @@id([courseName, courseDepartment])
+  courseSemester            Int
+  tutorCourses              TutorCourse[]
+  tutorCourseRequests       TutorCourseRequest[]
+  studentSemesterCourses    StudentSemesterCourse[]
+}
