@@ -3,8 +3,14 @@ model AllCoursesInSCE{
   courseDepartment          String
   // courseName and courseDepartment are the primary key
   @@id([courseName, courseDepartment])
-  courseSemester            Int
   tutorCourses              TutorCourse[]
   tutorCourseRequests       TutorCourseRequest[]
   studentSemesterCourses    StudentSemesterCourse[]
+}
+
+model SemesterInSCE{
+  id                       String @id @default(cuid())
+  startingDate             DateTime
+  endingDate               DateTime
+  studentSemesters         StudentSemester[]
 }

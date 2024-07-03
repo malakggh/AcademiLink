@@ -1,23 +1,25 @@
 model StudentSemester {
-  startingDate      DateTime
+  semesterId        String
+  semester          SemesterInSCE @relation(fields: [semesterId], references: [id])
   studentId         String
   student           Student  @relation(fields: [studentId], references: [id])
-  @@id([startingDate, studentId])
+  @@id([semesterId, studentId])
 
   courses           StudentSemesterCourse[]
   
   totalHours        Int @default(12)
+
 }
 
 model StudentSemesterCourse {
-  semesterStartingDate DateTime
+  semesterId           String
   studentId            String
-  studentSemester      StudentSemester @relation(fields: [semesterStartingDate, studentId], references: [startingDate, studentId])
+  studentSemester      StudentSemester @relation(fields: [semesterId, studentId], references: [semesterId, studentId])
 
   courseName           String
   courseDepartment     String
   course               AllCoursesInSCE @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
-  @@id([semesterStartingDate, studentId, courseName, courseDepartment])
+  @@id([semesterId, studentId, courseName, courseDepartment])
   
   sessionRequests   StudentSessionRequest[]
 }
@@ -27,11 +29,11 @@ model StudentSessionRequest {
   id                                String @id @default(cuid())
   
   studentId                         String
-  semesterStartingDate              DateTime
+  semesterId                        String
   courseName                        String
   courseDepartment                  String
 
-  studentSemesterCourse             StudentSemesterCourse @relation(fields: [semesterStartingDate, studentId, courseName, courseDepartment], references: [semesterStartingDate, studentId, courseName, courseDepartment])
+  studentSemesterCourse             StudentSemesterCourse @relation(fields: [semesterId, studentId, courseName, courseDepartment], references: [semesterId, studentId, courseName, courseDepartment])
   
 
   hours                             Int
