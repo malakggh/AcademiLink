@@ -1,6 +1,7 @@
 "use server";
 import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/connect";
+import { getCurrentSesmesterId } from "./util";
 
 export const getStudentCourses = async () => {
   try {
@@ -11,6 +12,7 @@ export const getStudentCourses = async () => {
     if (session.user.role === "MANAGER") {
       throw new Error("You don't have student permissions");
     }
+    const currentSemesterId = await getCurrentSesmesterId();
     try {
       const student = await prisma.student.findUniqueOrThrow({
         where: {
@@ -19,10 +21,7 @@ export const getStudentCourses = async () => {
         select: {
           // Include the last semester and get its courses
           semesters: {
-            orderBy: {
-              startingDate: "desc",
-            },
-            take: 1,
+            where: { semesterId: currentSemesterId },
             select: {
               courses: true,
               totalHours: true,

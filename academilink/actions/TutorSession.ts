@@ -30,7 +30,7 @@ export const getSessionReportByMonth = async (month: number, year: number) => {
                   id: true,
                   hours: true,
                   completionDate: true,
-                  semesterStartingDate: true,
+                  semesterId: true,
                   studentSemesterCourse: {
                     select: {
                       studentSemester: {
@@ -92,7 +92,7 @@ export const getAllSessionsForTutor = async () => {
                   hours: true,
                   date: true,
                   completionDate: true,
-                  semesterStartingDate: true,
+                  semesterId: true,
                   status: true,
                   studentSemesterCourse: {
                     select: {

@@ -19,3 +19,18 @@ export type ResolvedReturnType<T> = T extends (
 ) => Promise<infer R>
   ? R
   : any;
+
+export const getCurrentSesmesterId = async () => {
+  try {
+    // find the current semester by max start date
+    const currentSemester = await prisma.semesterInSCE.findFirst({
+      orderBy: { startingDate: "desc" },
+    });
+    if (!currentSemester) {
+      throw new Error("Semester not found");
+    }
+    return currentSemester.id;
+  } catch (error: any) {
+    throw new Error(`Operation failed: ${error.message}`);
+  }
+};

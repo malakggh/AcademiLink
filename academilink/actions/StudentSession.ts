@@ -2,7 +2,7 @@
 import { auth } from "@/utils/auth";
 import { prisma } from "@/utils/connect";
 import { getTutor } from "./Tutors";
-import { ResolvedReturnType } from "./util";
+import { ResolvedReturnType, getCurrentSesmesterId } from "./util";
 
 export const getAllAvailableTutorsForCourse = async (
   courseName: string,
@@ -76,6 +76,7 @@ export const sendTutorSessionRequest = async (
     }
     let studentHoursLeft;
     let studentInfo;
+    const currentSemesterId = await getCurrentSesmesterId();
     try {
       // check if the student has enough hours to request a session
       const studentHours = await prisma.student.findUniqueOrThrow({
@@ -86,13 +87,10 @@ export const sendTutorSessionRequest = async (
           id: true,
           department: true,
           semesters: {
-            orderBy: {
-              startingDate: "desc",
-            },
-            take: 1,
+            where: { semesterId: currentSemesterId },
             select: {
               totalHours: true,
-              startingDate: true,
+              semesterId: true,
               courses: {
                 select: {
                   sessionRequests: {
@@ -121,7 +119,7 @@ export const sendTutorSessionRequest = async (
       studentInfo = {
         id: studentHours.id,
         department: studentHours.department,
-        semesterStartingDate: studentHours.semesters[0].startingDate,
+        semesterId: studentHours.semesters[0].semesterId,
       };
     } catch (error: any) {
       throw new Error("Can't find student hours");
@@ -136,7 +134,7 @@ export const sendTutorSessionRequest = async (
           courseName: courseName,
           courseDepartment: courseDepartment,
           studentId: studentInfo.id,
-          semesterStartingDate: studentInfo.semesterStartingDate,
+          semesterId: studentInfo.semesterId,
           tutorId: tutorId,
         },
       });
@@ -161,6 +159,7 @@ export const getAllStudentSessionRequests = async () => {
       throw new Error("You don't have student permissions");
     }
     let requests;
+    const currentSemesterId = await getCurrentSesmesterId();
     try {
       requests = await prisma.student.findUniqueOrThrow({
         where: {
@@ -168,12 +167,9 @@ export const getAllStudentSessionRequests = async () => {
         },
         select: {
           semesters: {
-            orderBy: {
-              startingDate: "desc",
-            },
-            take: 1,
+            where: { semesterId: currentSemesterId },
             select: {
-              startingDate: true,
+              semesterId: true,
               totalHours: true,
               courses: {
                 select: {
