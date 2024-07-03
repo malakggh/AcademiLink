@@ -1,0 +1,46 @@
+model StudentSemester {
+  startingDate      DateTime
+  studentId         String
+  student           Student  @relation(fields: [studentId], references: [id])
+  @@id([startingDate, studentId])
+
+  courses           StudentSemesterCourse[]
+  
+  totalHours        Int @default(12)
+}
+
+model StudentSemesterCourse {
+  semesterStartingDate DateTime
+  studentId            String
+  studentSemester      StudentSemester @relation(fields: [semesterStartingDate, studentId], references: [startingDate, studentId])
+
+  courseName           String
+  courseDepartment     String
+  course               AllCoursesInSCE @relation(fields: [courseName, courseDepartment], references: [courseName, courseDepartment])
+  @@id([semesterStartingDate, studentId, courseName, courseDepartment])
+  
+  sessionRequests   StudentSessionRequest[]
+}
+
+
+model StudentSessionRequest {
+  id                                String @id @default(cuid())
+  
+  studentId                         String
+  semesterStartingDate              DateTime
+  courseName                        String
+  courseDepartment                  String
+
+  studentSemesterCourse             StudentSemesterCourse @relation(fields: [semesterStartingDate, studentId, courseName, courseDepartment], references: [semesterStartingDate, studentId, courseName, courseDepartment])
+  
+
+  hours                             Int
+
+  tutorId                           String
+  tutorCourse                       TutorCourse @relation(fields: [courseName, courseDepartment, tutorId], references: [courseName, courseDepartment, tutorId])
+
+  date                              DateTime @default(now())
+  
+  status                            StudentSessionRequestStatus @default(PENDING)
+  completionDate                    DateTime?
+}

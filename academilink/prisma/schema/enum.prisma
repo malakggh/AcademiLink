@@ -1,0 +1,23 @@
+enum UserRole {
+  STUDENT
+  TUTOR
+  MANAGER
+}
+
+enum StudentSessionRequestStatus {
+  PENDING     // by default
+  COMPLETED   // when the chosen tutor confirms that the reinforcement session is completed
+  CANCELED    // if the chosen tutor cancels the request
+}
+
+enum PreferredTeachingMethod {
+  ZOOM
+  FRONTAL
+  BOTH
+}
+
+enum CourseRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
