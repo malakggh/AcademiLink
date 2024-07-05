@@ -1,6 +1,9 @@
 "use client";
 import { addAllCourses, generateFakeUsers } from "@/actions/hack/main";
-import { generateFakeUsersAndStudents } from "@/actions/hack/student";
+import {
+  generateFakeStudentSessionRequests,
+  generateFakeUsersAndStudents,
+} from "@/actions/hack/student";
 import { generateFakeUsersAndTutors } from "@/actions/hack/tutor";
 import { Button } from "@/components/ui/button";
 
@@ -33,6 +36,15 @@ const page = () => {
         }}
       >
         Create 500 Fake Tutor
+      </Button>
+      <Button
+        size="lg"
+        onClick={async () => {
+          await generateFakeStudentSessionRequests();
+          alert("Student Session Requests created successfully");
+        }}
+      >
+        Create Student Session Requests
       </Button>
     </div>
   );

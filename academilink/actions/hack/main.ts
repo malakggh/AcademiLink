@@ -73,6 +73,24 @@ export const getRandomCourses = async (n: number, courseDepartment: string) => {
   return allCourses.slice(0, n);
 };
 
+export const getRandomTutor = async (
+  courseName: string,
+  departmentName: string
+) => {
+  const allTutors = await prisma.tutor.findMany({
+    where: {
+      courses: {
+        some: {
+          courseName: courseName,
+          courseDepartment: departmentName,
+        },
+      },
+    },
+  });
+  shuffleArray(allTutors);
+  return allTutors[0];
+};
+
 /*
 DELETE FROM "Tutor"
 WHERE "userId" NOT IN (

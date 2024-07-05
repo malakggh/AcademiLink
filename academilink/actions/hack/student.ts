@@ -1,9 +1,13 @@
 "use server";
 import { prisma } from "@/utils/connect";
-import { courses } from "@/app/hack/courses";
-import { faker } from "@faker-js/faker";
+import { fa, faker } from "@faker-js/faker";
 import { getCurrentSesmesterId } from "../util";
-import { generateFakeUsers, getRandomCourses, shuffleArray } from "./main";
+import {
+  generateFakeUsers,
+  getRandomCourses,
+  getRandomTutor,
+  shuffleArray,
+} from "./main";
 
 export const generateFakeUsersAndStudents = async (n: number) => {
   try {
@@ -67,3 +71,40 @@ export const generateFakeStudents = async (newUserIds: Array<string>) => {
 };
 
 // create fake student session requests
+export const generateFakeStudentSessionRequests = async () => {
+  const semesterId = await getCurrentSesmesterId();
+  const students = await prisma.student.findMany({
+    select: {
+      department: true,
+      id: true,
+      semesters: {
+        where: { semesterId: semesterId },
+        select: {
+          courses: true,
+        },
+      },
+    },
+  });
+
+  for (const student of students) {
+    const studentCourses = student.semesters[0].courses;
+    shuffleArray(studentCourses);
+    const randomCourse = studentCourses[0].courseName;
+    const tutor = await getRandomTutor(randomCourse, student.department);
+
+    try {
+      await prisma.studentSessionRequest.create({
+        data: {
+          studentId: student.id,
+          semesterId: semesterId,
+          courseName: randomCourse,
+          courseDepartment: student.department,
+          tutorId: tutor.id,
+          hours: faker.number.int({ min: 1, max: 4 }),
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+};
