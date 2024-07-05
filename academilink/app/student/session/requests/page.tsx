@@ -10,7 +10,7 @@ const SessionRequests = async () => {
     <>
       <H3>
         {"בקשות שלך לסמסטר הנוכחי"}
-        {` - (${semester.startingDate.toLocaleDateString("he-IL")})`}
+        {/* {` - (${semester.startingDate.toLocaleDateString("he-IL")})`} */}
       </H3>
       <Badge>
         <HoursLeft semester={semester} />
