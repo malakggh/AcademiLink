@@ -1,10 +1,7 @@
 "use client";
-import {
-  generateFakeStudents,
-  addAllCourses,
-  testx,
-  generateFakeTutors,
-} from "@/actions/hack";
+import { addAllCourses, generateFakeUsers } from "@/actions/hack/main";
+import { generateFakeUsersAndStudents } from "@/actions/hack/student";
+import { generateFakeUsersAndTutors } from "@/actions/hack/tutor";
 import { Button } from "@/components/ui/button";
 
 const page = () => {
@@ -22,28 +19,20 @@ const page = () => {
       <Button
         size="lg"
         onClick={async () => {
-          await testx();
-        }}
-      >
-        test
-      </Button>
-      <Button
-        size="lg"
-        onClick={async () => {
-          await generateFakeStudents(500);
+          await generateFakeUsersAndStudents(500);
           alert("Students created successfully");
         }}
       >
-        500 Fake Students
+        Create 500 Fake Students
       </Button>
       <Button
         size="lg"
         onClick={async () => {
-          await generateFakeTutors(500);
+          await generateFakeUsersAndTutors(500);
           alert("Tutors created successfully");
         }}
       >
-        500 Fake Tutor
+        Create 500 Fake Tutor
       </Button>
     </div>
   );
