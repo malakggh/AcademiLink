@@ -14,8 +14,7 @@ async def read_courses(db: AsyncSession = Depends(get_db)):
     for course in courses:
         parsed_course = {
             "courseName": course[0],
-            "courseDepartment": course[1],
-            "courseSemester": course[2]
+            "courseDepartment": course[1]
         }
         parsed_courses.append(parsed_course)
     return parsed_courses
