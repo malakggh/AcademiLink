@@ -15,7 +15,7 @@ export default function TutorSessionCourse({
 }: {
   course: getAllSessionsForTutorType["courses"][number];
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>

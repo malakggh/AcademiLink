@@ -243,7 +243,7 @@ export const changeSessionStatus = async (
         },
       });
     } catch (e: any) {
-      throw new Error("");
+      throw new Error("Can't update session status");
     }
   } catch (error: any) {
     throw new Error(`Operation failed: ${error.message}`);
