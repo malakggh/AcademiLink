@@ -2,7 +2,7 @@
 import { prisma } from "@/utils/connect";
 import { courses } from "@/app/hack/courses";
 import { faker } from "@faker-js/faker";
-import { getCurrentSesmesterId } from "../util";
+import { getCurrentSesmesterId, logMessage } from "../util";
 import { generateFakeUsers, getRandomCourses } from "./main";
 
 export const generateFakeUsersAndTutors = async (n: number) => {
@@ -91,6 +91,81 @@ export const generateFakeTutors = async (newUserIds: Array<string>) => {
       });
     });
   } catch (error: any) {
-    throw new Error("");
+    throw new Error(error.message);
+  }
+};
+
+export const processTutorRequestsRandomly = async () => {
+  try {
+    const semesterId = await getCurrentSesmesterId();
+    const semesterEndDate = await prisma.semesterInSCE.findUnique({
+      where: { id: semesterId },
+      select: { endingDate: true },
+    });
+    if (!semesterEndDate) {
+      throw new Error("Semester not found");
+    }
+    const tutors = await prisma.tutor.findMany({
+      select: {
+        id: true,
+        courses: {
+          select: {
+            courseName: true,
+            courseDepartment: true,
+            studentSessionRequests: {
+              where: {
+                semesterId: semesterId,
+                status: "PENDING",
+              },
+              select: {
+                id: true,
+                date: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    for (const tutor of tutors) {
+      for (const course of tutor.courses) {
+        for (const sessionRequest of course.studentSessionRequests) {
+          const randomStatus = faker.helpers.arrayElement([
+            "COMPLETED",
+            "CANCELED",
+            "PENDING",
+          ]);
+          if (randomStatus === "PENDING") {
+            continue;
+          }
+          const requestDate = new Date(sessionRequest.date);
+          // complete date is a random date between the request date and the end of the semester
+          const completionDate = faker.date.between({
+            from: requestDate,
+            to: semesterEndDate.endingDate,
+          });
+          try {
+            await prisma.studentSessionRequest.update({
+              where: {
+                id: sessionRequest.id,
+              },
+              data: {
+                status: randomStatus as "COMPLETED" | "CANCELED",
+                completionDate:
+                  randomStatus === "COMPLETED" ? completionDate : null,
+              },
+            });
+          } catch (error: any) {
+            throw new Error("");
+          }
+          logMessage(
+            "tutorSessionRequest",
+            `Tutor ${tutor.id} has updated session request ${sessionRequest.id} to ${randomStatus}\n completion date: ${completionDate}`
+          );
+        }
+      }
+    }
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 };

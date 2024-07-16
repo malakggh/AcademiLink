@@ -4,7 +4,10 @@ import {
   generateFakeStudentSessionRequests,
   generateFakeUsersAndStudents,
 } from "@/actions/hack/student";
-import { generateFakeUsersAndTutors } from "@/actions/hack/tutor";
+import {
+  generateFakeUsersAndTutors,
+  processTutorRequestsRandomly,
+} from "@/actions/hack/tutor";
 import { Button } from "@/components/ui/button";
 
 const page = () => {
@@ -45,6 +48,15 @@ const page = () => {
         }}
       >
         Create Student Session Requests
+      </Button>
+      <Button
+        size="lg"
+        onClick={async () => {
+          await processTutorRequestsRandomly();
+          alert("Tutor Session Requests Status Updated Successfully");
+        }}
+      >
+        Process Tutor Requests Randomly (Update Tutor Session Requests Status)
       </Button>
     </div>
   );
