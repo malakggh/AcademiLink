@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/utils/connect";
 import { fa, faker } from "@faker-js/faker";
-import { getCurrentSesmesterId } from "../util";
+import { getCurrentSesmesterId, logMessage } from "../util";
 import {
   generateFakeUsers,
   getRandomCourses,
@@ -92,6 +92,11 @@ export const generateFakeStudentSessionRequests = async () => {
     const randomCourse = studentCourses[0].courseName;
     const tutor = await getRandomTutor(randomCourse, student.department);
 
+    logMessage(
+      "studentSessionRequest",
+      `student: ${student.id}\ncourse: ${randomCourse}\ntutor: ${tutor.id}\n\n`
+    );
+
     try {
       await prisma.studentSessionRequest.create({
         data: {
@@ -104,7 +109,7 @@ export const generateFakeStudentSessionRequests = async () => {
         },
       });
     } catch (error: any) {
-      throw new Error(error.message);
+      console.log("error", error.message);
     }
   }
 };

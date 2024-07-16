@@ -34,3 +34,21 @@ export const getCurrentSesmesterId = async () => {
     throw new Error(`Operation failed: ${error.message}`);
   }
 };
+
+import * as fs from "fs";
+import * as path from "path";
+
+// Function to append logs to a file
+export const logMessage = (name: string, message: string): void => {
+  const logDir = path.join(__dirname, "log");
+  const filePath = path.join(logDir, `${name}.txt`);
+
+  // Ensure the log directory exists
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+
+  // Append the message to the file, creating the file if it doesn't exist
+  const logEntry = `${new Date().toISOString()} - ${message}\n`;
+  fs.appendFileSync(filePath, logEntry, "utf8");
+};
