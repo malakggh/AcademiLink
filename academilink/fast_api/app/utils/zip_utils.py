@@ -15,7 +15,7 @@ def create_zip_from_plots(grouped_data, x_col, y_col, colors, plot_type='bar', t
             if plot_type == 'grouped_bar':
                 buf = generate_grouped_bar_plot(group, x_col, y_col, title, x_label_final, y_label_final, colors)
             else:
-                buf = generate_plot(group, x_col, y_col[0], title, x_label_final, y_label_final, colors, plot_type)
+                buf = generate_plot(group, x_col, y_col, title, x_label_final, y_label_final, colors, plot_type)
             # Add the buffer to the ZIP file
             zip_file.writestr(f"{key}.png", buf.getvalue())
 
