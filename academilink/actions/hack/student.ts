@@ -73,6 +73,13 @@ export const generateFakeStudents = async (newUserIds: Array<string>) => {
 // create fake student session requests
 export const generateFakeStudentSessionRequests = async () => {
   const semesterId = await getCurrentSesmesterId();
+  const semesterStartingDate = await prisma.semesterInSCE.findUnique({
+    where: { id: semesterId },
+    select: { startingDate: true },
+  });
+  if (!semesterStartingDate) {
+    throw new Error("Semester not found");
+  }
   const students = await prisma.student.findMany({
     select: {
       department: true,
@@ -91,6 +98,10 @@ export const generateFakeStudentSessionRequests = async () => {
     shuffleArray(studentCourses);
     const randomCourse = studentCourses[0].courseName;
     const tutor = await getRandomTutor(randomCourse, student.department);
+    const dateRequest = faker.date.between({
+      from: semesterStartingDate.startingDate,
+      to: new Date(),
+    });
 
     logMessage(
       "studentSessionRequest",
@@ -100,6 +111,7 @@ export const generateFakeStudentSessionRequests = async () => {
     try {
       await prisma.studentSessionRequest.create({
         data: {
+          date: dateRequest,
           studentId: student.id,
           semesterId: semesterId,
           courseName: randomCourse,
