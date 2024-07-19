@@ -27,7 +27,10 @@ async function AppBar() {
       { href: "/tutor/sessions", label: "התגבורים שלי" },
       { href: "/tutor/report", label: "דוח חודשי שלי" },
     ],
-    MANAGER: [{ href: "/manager/courses/requests", label: "בקשות מתגברים" }],
+    MANAGER: [
+      { href: "/manager/courses/requests", label: "בקשות מתגברים" },
+      { href: "/manager/stats", label: "סטטיסטיקות" },
+    ],
   };
   return (
     <div className="py-4 border-b pb-2 mb-4">
