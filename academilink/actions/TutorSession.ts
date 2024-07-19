@@ -2,15 +2,26 @@
 import { prisma } from "@/utils/connect";
 import { ResolvedReturnType, getSessionCheckRole } from "./util";
 
-export const getSessionReportByMonth = async (month: number, year: number) => {
+export const getSessionReportByMonth = async (
+  month: number,
+  year: number,
+  userId?: string
+) => {
   try {
-    const session = await getSessionCheckRole("TUTOR");
+    // if userId is provided, make sure the user is a manager
+    // and has permissions to view the report
+    let session;
+    if (userId) {
+      session = await getSessionCheckRole("MANAGER"); // check if the user is a manager else throw an error
+    } else {
+      session = await getSessionCheckRole("TUTOR");
+    }
 
     let requests;
     try {
       requests = await prisma.tutor.findUniqueOrThrow({
         where: {
-          userId: session.user.id,
+          userId: userId || session.user.id,
         },
         select: {
           courses: {

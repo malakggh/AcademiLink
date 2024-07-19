@@ -30,6 +30,7 @@ async function AppBar() {
     MANAGER: [
       { href: "/manager/courses/requests", label: "בקשות מתגברים" },
       { href: "/manager/stats", label: "סטטיסטיקות" },
+      { href: "/manager/tutors/report", label: "דוח חודשי של המתגברים" },
     ],
   };
   return (

@@ -8,18 +8,21 @@ import MonthlyReportSummary from "./MonthlyReportSummary";
 
 export default function MonthlyReport({
   date,
+  userId,
 }: {
   date: { month: string; year: string };
+  userId: string | null;
 }) {
   if (!date.month || !date.year) throw new Error("Date is not set");
   if (isNaN(parseInt(date.month)) || isNaN(parseInt(date.year)))
     throw new Error("Date is not a number");
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["studentSessionRequests", date],
+    queryKey: ["studentSessionRequests", date, userId],
     queryFn: async () => {
       return await getSessionReportByMonth(
         parseInt(date.month),
-        parseInt(date.year)
+        parseInt(date.year),
+        userId || undefined
       );
     },
     refetchOnWindowFocus: false,

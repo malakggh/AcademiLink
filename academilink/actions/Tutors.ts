@@ -174,3 +174,32 @@ export const changeAvabilityFlags = async (newFlag: number) => {
     throw new Error(`Operation failed: ${error.message}`);
   }
 };
+
+export const getTutorsWithinDepartment = async (department: string) => {
+  try {
+    try {
+      const tutors = await prisma.user.findMany({
+        where: {
+          tutor: {
+            courses: {
+              some: {
+                courseDepartment: department,
+              },
+            },
+          },
+        },
+        select: {
+          name: true,
+          email: true,
+          phoneNumber: true,
+          id: true,
+        },
+      });
+      return tutors;
+    } catch (error: any) {
+      throw new Error("Tutors not found");
+    }
+  } catch (error: any) {
+    throw new Error(`Operation failed: ${error.message}`);
+  }
+};

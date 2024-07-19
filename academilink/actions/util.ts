@@ -52,3 +52,17 @@ export const logMessage = (name: string, message: string): void => {
   const logEntry = `${new Date().toISOString()} - ${message}\n`;
   fs.appendFileSync(filePath, logEntry, "utf8");
 };
+
+export const getDepartments = async () => {
+  try {
+    const departments = await prisma.allCoursesInSCE.findMany({
+      distinct: "courseDepartment",
+      select: {
+        courseDepartment: true,
+      },
+    });
+    return departments.map((department) => department.courseDepartment);
+  } catch (error: any) {
+    throw new Error(`Operation failed: ${error.message}`);
+  }
+};
