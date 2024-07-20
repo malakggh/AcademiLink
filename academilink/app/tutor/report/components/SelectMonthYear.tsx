@@ -32,10 +32,12 @@ export default function SelectMonthYear({
     }>
   >;
 }) {
+  const today = new Date();
   const years = [2023, 2024];
   return (
     <div className="flex gap-2 justify-start my-4">
       <Select
+        defaultValue={(today.getMonth() + 1).toString()}
         onValueChange={(value) =>
           setDate((prev) => ({ ...prev, month: value }))
         }
@@ -58,6 +60,7 @@ export default function SelectMonthYear({
       </Select>
       <Select
         onValueChange={(value) => setDate((prev) => ({ ...prev, year: value }))}
+        defaultValue={today.getFullYear().toString()}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="בחר שנה" />
