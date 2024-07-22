@@ -64,53 +64,37 @@ export default function ManagerStats() {
       });
     },
   });
+  type StatType =
+    | "session-completion-rates"
+    | "tutor-course-distribution"
+    | "monthly-session-trends"
+    | "tutor-sessions"
+    | "student-hours";
+
+  const buttons: { stat: StatType; label: string }[] = [
+    { stat: "session-completion-rates", label: "התפלגות לקיום התגבורים" },
+    { stat: "tutor-course-distribution", label: "התפלגות מתגברים לפי קורסים" },
+    { stat: "monthly-session-trends", label: "מגמות מפגשים חודשיים" },
+    { stat: "tutor-sessions", label: "מפגשי מתגברים" },
+    { stat: "student-hours", label: "שעות סטודנטים" },
+  ];
+  const [selectedButton, setSelectedButton] = useState(-1);
   return (
     <>
-      <Button
-        onClick={() => {
-          mutate({ stat: "session-completion-rates" });
-        }}
-        variant="outline"
-        className="ml-auto"
-      >
-        {"התפלגות לקיום התגבורים"}
-      </Button>
-      <Button
-        onClick={() => {
-          mutate({ stat: "tutor-course-distribution" });
-        }}
-        variant="outline"
-        className="ml-auto"
-      >
-        {"tutor-course-distribution"}
-      </Button>
-      <Button
-        onClick={() => {
-          mutate({ stat: "monthly-session-trends" });
-        }}
-        variant="outline"
-        className="ml-auto"
-      >
-        {"monthly-session-trends"}
-      </Button>
-      <Button
-        onClick={() => {
-          mutate({ stat: "tutor-sessions" });
-        }}
-        variant="outline"
-        className="ml-auto"
-      >
-        {"tutor-sessions"}
-      </Button>
-      <Button
-        onClick={() => {
-          mutate({ stat: "student-hours" });
-        }}
-        variant="outline"
-        className="ml-auto"
-      >
-        {"student-hours"}
-      </Button>
+      {buttons.map((button, index) => (
+        <Button
+          key={button.stat}
+          onClick={() => {
+            setSelectedButton(index);
+            mutate({ stat: button.stat });
+          }}
+          variant={selectedButton == index ? "default" : "outline"}
+          className="ml-auto"
+          disabled={isPending}
+        >
+          {button.label}
+        </Button>
+      ))}
       {!isPending && !isError && images.length > 0 && (
         <Image
           src={images[selectedImageIndex]}
