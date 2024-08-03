@@ -79,42 +79,85 @@ export default function ManagerStats() {
     { stat: "student-hours", label: "שעות סטודנטים" },
   ];
   const [selectedButton, setSelectedButton] = useState(-1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleImageClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <>
-      {buttons.map((button, index) => (
-        <Button
-          key={button.stat}
-          onClick={() => {
-            setSelectedButton(index);
-            mutate({ stat: button.stat });
-          }}
-          variant={selectedButton == index ? "default" : "outline"}
-          className="ml-auto"
-          disabled={isPending}
-        >
-          {button.label}
-        </Button>
-      ))}
+      <div className="flex flex-wrap justify-center gap-2 mb-5">
+        {buttons.map((button, index) => (
+          <Button
+            key={button.stat}
+            onClick={() => {
+              setSelectedButton(index);
+              mutate({ stat: button.stat });
+            }}
+            className={`px-4 py-2 ${
+              selectedButton === index
+                ? "bg-primary text-primary-foreground"
+                : "bg-card text-card-foreground border border-border"
+            } hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-opacity-50`}
+            disabled={isPending}
+          >
+            {button.label}
+          </Button>
+        ))}
+      </div>
       {!isPending && !isError && images.length > 0 && (
-        <Image
-          src={images[selectedImageIndex]}
-          width={750}
-          height={750}
-          alt="Selected Image"
-        />
+        <>
+          <div
+            onClick={handleImageClick}
+            className="cursor-zoom-in relative w-full max-w-3xl h-auto m-auto"
+          >
+            <Image
+              src={images[selectedImageIndex]}
+              layout="responsive"
+              width={700}
+              height={394} // Adjust these values based on your images' aspect ratio
+              objectFit="contain"
+              alt={"תמונה נבחרת"}
+              className="rounded-lg shadow-lg"
+            />
+          </div>
+          <div className="flex justify-center gap-2 mt-2">
+            {images.map((img, idx) => (
+              <Button
+                key={idx}
+                onClick={() => setSelectedImageIndex(idx)}
+                className={`px-3 py-1 rounded-full ${
+                  selectedImageIndex === idx
+                    ? "bg-accent text-accent-foreground"
+                    : "hover:bg-muted-foreground"
+                }`}
+              >
+                {"תמונה " + (idx + 1)}
+              </Button>
+            ))}
+          </div>
+        </>
       )}
-      {!isPending && !isError && images.length > 0 && (
-        <div>
-          {images.map((img, idx) => (
-            <Button
-              key={idx}
-              onClick={() => setSelectedImageIndex(idx)}
-              variant="outline"
-              className="ml-auto"
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="bg-white p-5 rounded-lg">
+            <Image
+              src={images[selectedImageIndex]}
+              layout="fill"
+              objectFit="contain"
+              alt={"תמונה נבחרת"}
+            />
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-white bg-red-500 p-2 rounded-full"
             >
-              {`Image ${idx + 1}`}
-            </Button>
-          ))}
+              {"סגור"}
+            </button>
+          </div>
         </div>
       )}
     </>
