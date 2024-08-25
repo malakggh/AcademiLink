@@ -11,8 +11,13 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "@radix-ui/react-navigation-menu";
 import { auth, signIn, signOut } from "auth";
-import Link from "next/link";
+import ActiveLink from "@/components/ActiveLink"; // Import the new client-side component
 
 async function AppBar() {
   const session = await auth();
@@ -43,23 +48,30 @@ async function AppBar() {
               <Badge className="mr-2">{session.user.role}</Badge>
             </H2>
 
-            <Menubar>
-              <MenubarMenu>
-                <MenubarTrigger>{"פעלות"}</MenubarTrigger>
-                <MenubarContent>
-                  {navigation[session.user.role].map((item, i) => (
-                    <div key={i}>
-                      <MenubarItem asChild style={{ direction: "rtl" }}>
-                        <Link href={item.href}>{item.label}</Link>
-                      </MenubarItem>
-                      {navigation[session.user.role].length != i + 1 && (
-                        <MenubarSeparator />
-                      )}
-                    </div>
-                  ))}
-                </MenubarContent>
-              </MenubarMenu>
-            </Menubar>
+            <NavigationMenu>
+              <NavigationMenuList
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  direction: "rtl",
+                }}
+              >
+                {navigation[session.user.role].map((item, i) => (
+                  <div
+                    key={i}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    <ActiveLink href={item.href} label={item.label} />{" "}
+                    {/* Use ActiveLink */}
+                    {navigation[session.user.role].length !== i + 1 && (
+                      <MenubarSeparator
+                        style={{ marginLeft: "8px", marginRight: "8px" }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
             <div className="flex gap-2">
               <form
                 action={async () => {

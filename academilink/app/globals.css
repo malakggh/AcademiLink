@@ -121,3 +121,16 @@
     --ring: 142.4 71.8% 29.2%;
   }
 }
+
+/* styles/globals.css or styles.css */
+@import url("https://fonts.googleapis.com/css2?family=Bellefair&display=swap");
+
+body {
+  font-family: "Bellefair", serif;
+}
+
+.bellefair-regular {
+  font-family: "Bellefair", serif;
+  font-weight: 400;
+  font-style: normal;
+}
