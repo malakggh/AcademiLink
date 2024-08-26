@@ -100,7 +100,7 @@ export default function StudentSessionTable({
           {hours}
         </Badge>
         <p>
-          {"מתרגלים זמינים לקורס "}
+          {"מתגברים זמינים לקורס "}
           <Badge>{courseName}</Badge>
         </p>
       </div>
