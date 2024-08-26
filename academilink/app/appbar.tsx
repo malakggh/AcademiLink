@@ -2,22 +2,13 @@ import { ModeToggle } from "@/components/ModeToggle";
 import { H2 } from "@/components/ui/Typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
+import { MenubarSeparator } from "@/components/ui/menubar";
 import {
   NavigationMenu,
-  NavigationMenuItem,
   NavigationMenuList,
 } from "@radix-ui/react-navigation-menu";
 import { auth, signIn, signOut } from "auth";
-import ActiveLink from "@/components/ActiveLink"; // Import the new client-side component
+import ActiveLink from "@/components/ActiveLink";
 
 async function AppBar() {
   const session = await auth();
@@ -38,47 +29,35 @@ async function AppBar() {
       { href: "/manager/tutors/report", label: "דוח חודשי של המתגברים" },
     ],
   };
+
   return (
     <div className="py-4 border-b pb-2 mb-4">
       <>
         {session && session.user ? (
-          <div className="flex flex-wrap justify-between mx-4">
-            <H2>
+          <div className="flex justify-between items-center mx-4">
+            <H2 className="flex flex-col items-start justify-center">
               {session.user.name}
-              <Badge className="mr-2">{session.user.role}</Badge>
+              <Badge>{session.user.role}</Badge>
             </H2>
 
             <NavigationMenu>
-              <NavigationMenuList
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  direction: "rtl",
-                }}
-              >
+              <NavigationMenuList className="flex items-center rtl">
                 {navigation[session.user.role].map((item, i) => (
-                  <div
-                    key={i}
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    <ActiveLink href={item.href} label={item.label} />{" "}
-                    {/* Use ActiveLink */}
+                  <div key={i} className="flex items-center">
+                    <ActiveLink href={item.href} label={item.label} />
                     {navigation[session.user.role].length !== i + 1 && (
-                      <MenubarSeparator
-                        style={{ marginLeft: "8px", marginRight: "8px" }}
-                      />
+                      <MenubarSeparator className="mx-2" />
                     )}
                   </div>
                 ))}
               </NavigationMenuList>
             </NavigationMenu>
-            <div className="flex gap-2">
+
+            <div className="flex gap-2 items-center">
               <form
                 action={async () => {
                   "use server";
-                  await signOut({
-                    redirectTo: "/",
-                  });
+                  await signOut({ redirectTo: "/" });
                 }}
               >
                 <Button type="submit">{"להתנתק"}</Button>
@@ -87,7 +66,7 @@ async function AppBar() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-row justify-between mx-4">
+          <div className="flex justify-between items-center mx-4">
             <form
               action={async () => {
                 "use server";
