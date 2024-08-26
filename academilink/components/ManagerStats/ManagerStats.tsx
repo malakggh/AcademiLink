@@ -74,7 +74,7 @@ export default function ManagerStats() {
   const buttons: { stat: StatType; label: string }[] = [
     { stat: "session-completion-rates", label: "התפלגות לקיום התגבורים" },
     { stat: "tutor-course-distribution", label: "התפלגות מתגברים לפי קורסים" },
-    { stat: "monthly-session-trends", label: "מגמות מפגשים חודשיים" },
+    { stat: "monthly-session-trends", label: "תגבורים חודשיים" },
     { stat: "tutor-sessions", label: "מפגשי מתגברים" },
     { stat: "student-hours", label: "שעות סטודנטים" },
   ];
