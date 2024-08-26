@@ -28,7 +28,7 @@ export default async function Courses() {
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="secondary" className="p-7 ml-auto my-7">
+          <Button variant="default" className="p-7 ml-auto my-7">
             <H3>{"בקשת קורס חדש"}</H3>
           </Button>
         </SheetTrigger>

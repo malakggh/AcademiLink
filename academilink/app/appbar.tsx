@@ -9,6 +9,8 @@ import {
 } from "@radix-ui/react-navigation-menu";
 import { auth, signIn, signOut } from "auth";
 import ActiveLink from "@/components/ActiveLink";
+import Image from "next/image";
+import Link from "next/link";
 
 async function AppBar() {
   const session = await auth();
@@ -31,7 +33,7 @@ async function AppBar() {
   };
 
   return (
-    <div className="py-4 border-b pb-2 mb-4">
+    <div className="pt-4 border-b pb-2 mb-1">
       <>
         {session && session.user ? (
           <div className="flex justify-between items-center mx-4">
@@ -67,14 +69,32 @@ async function AppBar() {
           </div>
         ) : (
           <div className="flex justify-between items-center mx-4">
-            <form
+            {/* <form
               action={async () => {
                 "use server";
                 await signIn();
               }}
             >
               <Button type="submit">{"להתחבר"}</Button>
-            </form>
+            </form> */}
+            {/* <Link href="/loginbox" passHref>
+              <Button asChild>{"להתחבר"}</Button>
+            </Link> */}
+            <Link href="/loginbox" passHref>
+              <Button>{"להתחבר"}</Button>
+            </Link>
+            <div className="flex">
+              <H2 className="flex flex-col items-start justify-center">
+                AcademiLink
+              </H2>
+              {/* <Image
+                src="/images/AcademiLink.png"
+                alt="AcademiLink"
+                width={150}
+                height={150}
+                quality={100}
+              /> */}
+            </div>
             <ModeToggle />
           </div>
         )}
