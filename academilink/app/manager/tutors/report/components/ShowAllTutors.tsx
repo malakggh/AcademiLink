@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
@@ -36,27 +36,24 @@ export default function ShowAllTutors({
       {tutors && (
         <ScrollArea className="mt-5 w-full mx-auto h-screen rounded-md border">
           <div className="p-4">
-            <H2 className="mb-4 text-lg font-medium leading-none">
+            <H2 className="mb-4 text-lg font-medium leading-none text-right">
               {"מתגברים במחלקה"}
             </H2>
             {tutors.map((tutor) => (
               <div
                 key={tutor.id}
                 onClick={() => setSelectedTutorUserId(tutor.id)}
-                // className={`flex flex-row items-center justify-center py-4 cursor-pointer`}
               >
                 <div
                   className={`
-                    flex flex-row-reverse items-center justify-between py-4 cursor-pointer
+                    flex flex-row-reverse items-center justify-between py-4 px-3 cursor-pointer
                     ${
                       selectedTutorUserId === tutor.id
-                        ? "bg-primary text-primary-foreground"
-                        : ""
+                        ? "bg-light-green text-primary-foreground rounded-lg" // Change to light green background color with rounded edges
+                        : "rounded-lg"
                     }`}
                 >
-                  {/* <h5 className="text-lg font-bold">{tutor.name}</h5> */}
                   <NameDisplay name={tutor.name} />
-                  {/* <p className="text-sm text-gray-500">{tutor.email}</p> */}
                   <EmailDisplay email={tutor.email} />
                 </div>
                 <Separator className="my-2 w-full" />

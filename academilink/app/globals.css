@@ -134,3 +134,12 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+@layer base {
+  .bg-light-green {
+    background-color: #4d976a; /* Light green color */
+  }
+
+  .text-black {
+    color: #000000; /* Black color for text */
+  }
+}

@@ -1,6 +1,6 @@
 export function CallToActionSection() {
   return (
-    <section className="bg-accent text-accent-foreground py-20">
+    <section className="bg-[#b0bbaf] text-accent-foreground py-20">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold mb-6">
           {"הצטרף לקהילת AcademiLink!"}

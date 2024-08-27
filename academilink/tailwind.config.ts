@@ -22,6 +22,11 @@ const config = {
         sans: ["Bellefair", "serif"],
       },
       colors: {
+        "light-green": "#4d976a",
+        blue: {
+          500: "#1D4ED8", // Example blue color
+        },
+        "dark-blue": "#003366",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

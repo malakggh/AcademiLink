@@ -33,7 +33,8 @@ async function AppBar() {
   };
 
   return (
-    <div className="pt-4 border-b pb-2 mb-1">
+    <div className="pt-1 border-b pb-0.5 mb-0">
+      {/* Further reduced padding and margin */}
       <>
         {session && session.user ? (
           <div className="flex justify-between items-center mx-4">
@@ -68,34 +69,22 @@ async function AppBar() {
             </div>
           </div>
         ) : (
-          <div className="flex justify-between items-center mx-4">
-            {/* <form
-              action={async () => {
-                "use server";
-                await signIn();
-              }}
-            >
-              <Button type="submit">{"להתחבר"}</Button>
-            </form> */}
-            {/* <Link href="/loginbox" passHref>
-              <Button asChild>{"להתחבר"}</Button>
-            </Link> */}
-            <Link href="/loginbox" passHref>
-              <Button>{"להתחבר"}</Button>
-            </Link>
+          <div className="flex justify-between items-center mx-3 mb-0">
             <div className="flex">
-              <H2 className="flex flex-col items-start justify-center">
-                AcademiLink
-              </H2>
-              {/* <Image
+              <Image
                 src="/images/AcademiLink.png"
                 alt="AcademiLink"
-                width={150}
-                height={150}
+                width={100}
+                height={100}
                 quality={100}
-              /> */}
+              />
             </div>
-            <ModeToggle />
+            <div className="flex gap-2 items-center">
+              <Link href="/loginbox" passHref>
+                <Button>{"להתחבר"}</Button>
+              </Link>
+              <ModeToggle />
+            </div>
           </div>
         )}
       </>
